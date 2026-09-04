@@ -4,7 +4,7 @@ import { cityHref } from "@/lib/i18n";
 
 export const SITE_NAME = "Pharmacies de Garde Maroc";
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://pharmacies-garde-maroc.ma";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://h24pharmacie.com";
 
 export function absoluteUrl(path: string): string {
   return `${SITE_URL}${path}`;

@@ -6,7 +6,7 @@ export const TELECONTACT_SOURCE_URL =
 export const TELECONTACT_API_PATH =
   "/trouver/pharmacie-guarde-zone-jour-fonctionalite.php";
 export const TELECONTACT_USER_AGENT =
-  "Mozilla/5.0 (compatible; PharmaciesGardeMarocBot/0.1; +https://pharmacies-garde-maroc.ma)";
+  "Mozilla/5.0 (compatible; H24PharmacieBot/0.1; +https://h24pharmacie.com)";
 
 export interface TelecontactApiItem {
   rs_comp?: string;

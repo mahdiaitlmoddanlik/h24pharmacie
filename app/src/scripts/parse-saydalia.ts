@@ -4,7 +4,7 @@ export const SAYDALIA_PAGE_URL =
   "https://saydalia.ma/fr/pharmacies-de-garde/";
 export const SAYDALIA_API_URL = "https://saydalia.ma/api/siteweb_api.php";
 export const SAYDALIA_USER_AGENT =
-  "Mozilla/5.0 (compatible; PharmaciesGardeMarocBot/0.1; +https://pharmacies-garde-maroc.ma)";
+  "Mozilla/5.0 (compatible; H24PharmacieBot/0.1; +https://h24pharmacie.com)";
 
 export interface SaydaliaApiItem {
   id?: string | number;

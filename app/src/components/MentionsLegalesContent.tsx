@@ -91,7 +91,7 @@ export default function MentionsLegalesContent({ locale }: { locale: Locale }) {
                   إذا كنت صيدلانياً أو ممثلاً عن هيئة وترغب في تصحيح هاتف صيدليتك، أو تحديث جدول الحراسة، أو تقديم أي استفسار، نرحب بتواصلكم المباشر:
                 </p>
                 <div className="rounded-lg bg-surface-muted p-4 text-sm">
-                  <p>البريد الإلكتروني المخصص: <strong className="text-primary-dark">contact@pharmacies-garde-maroc.ma</strong></p>
+                  <p>البريد الإلكتروني المخصص: <strong className="text-primary-dark">contact@h24pharmacie.com</strong></p>
                   <p className="mt-1 text-xs text-muted">تتم معالجة طلبات التصحيح في غضون 24 ساعة كحد أقصى حرصاً على صحة وسلامة المواطنين.</p>
                 </div>
               </section>
@@ -148,7 +148,7 @@ export default function MentionsLegalesContent({ locale }: { locale: Locale }) {
                   Vous êtes pharmacien titulaire et souhaitez corriger une information, signaler un changement d’horaires ou demander le retrait de coordonnées ? Notre équipe traite ces demandes en priorité.
                 </p>
                 <div className="rounded-lg bg-surface-muted p-4 text-sm">
-                  <p>Email de contact : <strong className="text-primary-dark">contact@pharmacies-garde-maroc.ma</strong></p>
+                  <p>Email de contact : <strong className="text-primary-dark">contact@h24pharmacie.com</strong></p>
                   <p className="mt-1 text-xs text-muted">Les requêtes légitimes d’actualisation ou de rectification sont exécutées sous 24h.</p>
                 </div>
               </section>
