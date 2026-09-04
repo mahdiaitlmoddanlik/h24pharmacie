@@ -1,12 +1,31 @@
+import { Pool } from "pg";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-const connectionString = process.env.DATABASE_URL;
+const rawConnectionString = process.env.DATABASE_URL;
+
+function normalizeConnectionString(url?: string): string | undefined {
+  if (!url) return undefined;
+  // Supabase pooler uses internal/intermediate certificates.
+  // Replacing sslmode=require with sslmode=no-verify prevents pg-connection-string
+  // from rejecting the Supabase pooler certificate in serverless Node environments.
+  if (url.includes("sslmode=require") && !url.includes("uselibpqcompat=true")) {
+    return url.replace("sslmode=require", "sslmode=no-verify");
+  }
+  return url;
+}
+
+const connectionString = normalizeConnectionString(rawConnectionString);
 
 function createPrismaClient() {
   if (!connectionString) return null;
 
-  const adapter = new PrismaPg({ connectionString });
+  const pool = new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
+  });
+
+  const adapter = new PrismaPg(pool);
 
   return new PrismaClient({
     adapter,
