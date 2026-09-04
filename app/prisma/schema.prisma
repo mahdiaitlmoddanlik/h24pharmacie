@@ -1,0 +1,193 @@
+// Prisma schema for Pharmacies de Garde Maroc
+// See PROJECT_PLAN.md Phase 4 — Database Design.
+// The app currently runs on the seed data in src/lib/data; connect a real
+// PostgreSQL database here and swap the data layer to enable the scraper
+// pipeline described in the plan.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum SourceType {
+  website
+  manual
+  official
+  user
+  pharmacy
+
+  @@map("source_type")
+}
+
+enum DutyPeriod {
+  day
+  night
+  h24 @map("24h")
+  unknown
+
+  @@map("duty_period")
+}
+
+enum VerificationStatus {
+  unverified
+  source_verified
+  user_confirmed
+  pharmacy_claimed
+
+  @@map("verification_status")
+}
+
+enum ScrapeStatus {
+  success
+  partial
+  failed
+
+  @@map("scrape_status")
+}
+
+enum ReportIssueType {
+  closed
+  wrong_phone
+  wrong_address
+  not_on_duty
+  other
+
+  @@map("report_issue_type")
+}
+
+enum ReportStatus {
+  new
+  reviewed
+  resolved
+  rejected
+
+  @@map("report_status")
+}
+
+model Source {
+  id            String         @id @default(cuid())
+  name          String
+  baseUrl       String         @map("base_url")
+  type          SourceType     @default(website)
+  lastCheckedAt DateTime?      @map("last_checked_at")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  pharmacies    Pharmacy[]
+  dutySchedules DutySchedule[]
+  scrapeRuns    ScrapeRun[]
+
+  @@map("sources")
+}
+
+model City {
+  id            String         @id @default(cuid())
+  nameFr        String         @map("name_fr")
+  nameAr        String         @map("name_ar")
+  slug          String         @unique
+  region        String?
+  regionAr      String?        @map("region_ar")
+  latitude      Float
+  longitude     Float
+  isActive      Boolean        @default(true) @map("is_active")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  pharmacies    Pharmacy[]
+  dutySchedules DutySchedule[]
+  reports       Report[]
+
+  @@map("cities")
+}
+
+model Pharmacy {
+  id                 String             @id @default(cuid())
+  name               String
+  slug               String
+  cityId             String             @map("city_id")
+  city               City               @relation(fields: [cityId], references: [id])
+  address            String?
+  addressAr          String?            @map("address_ar")
+  neighborhood       String?
+  phone              String?
+  whatsapp           String?
+  latitude           Float?
+  longitude          Float?
+  googleMapsUrl      String?            @map("google_maps_url")
+  wazeUrl            String?            @map("waze_url")
+  sourceId           String?            @map("source_id")
+  sourceExternalId   String?            @map("source_external_id")
+  source             Source?            @relation(fields: [sourceId], references: [id])
+  verificationStatus VerificationStatus @default(unverified) @map("verification_status")
+  claimedByPharmacy  Boolean            @default(false) @map("claimed_by_pharmacy")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+  dutySchedules      DutySchedule[]
+  reports            Report[]
+
+  @@unique([cityId, slug])
+  @@unique([sourceId, sourceExternalId])
+  @@index([cityId])
+  @@map("pharmacies")
+}
+
+model DutySchedule {
+  id              String     @id @default(cuid())
+  pharmacyId      String     @map("pharmacy_id")
+  pharmacy        Pharmacy   @relation(fields: [pharmacyId], references: [id])
+  cityId          String     @map("city_id")
+  city            City       @relation(fields: [cityId], references: [id])
+  dutyDate        DateTime   @map("duty_date") @db.Date
+  period          DutyPeriod @default(unknown)
+  sourceId        String?    @map("source_id")
+  source          Source?    @relation(fields: [sourceId], references: [id])
+  sourceUrl       String?    @map("source_url")
+  scrapedAt       DateTime   @default(now()) @map("scraped_at")
+  confidenceScore Float      @default(1) @map("confidence_score")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  @@unique([pharmacyId, dutyDate, period])
+  @@index([cityId, dutyDate])
+  @@index([dutyDate])
+  @@index([sourceId])
+  @@map("duty_schedules")
+}
+
+model ScrapeRun {
+  id              String       @id @default(cuid())
+  sourceId        String?      @map("source_id")
+  source          Source?      @relation(fields: [sourceId], references: [id])
+  startedAt       DateTime     @default(now()) @map("started_at")
+  finishedAt      DateTime?    @map("finished_at")
+  status          ScrapeStatus @default(success)
+  citiesUpdated   Int          @default(0) @map("cities_updated")
+  recordsFound    Int          @default(0) @map("records_found")
+  errorMessage    String?      @map("error_message")
+  rawSnapshotPath String?      @map("raw_snapshot_path")
+
+  @@index([sourceId])
+  @@index([startedAt])
+  @@map("scrape_runs")
+}
+
+model Report {
+  id         String          @id @default(cuid())
+  pharmacyId String?         @map("pharmacy_id")
+  pharmacy   Pharmacy?       @relation(fields: [pharmacyId], references: [id])
+  cityId     String?         @map("city_id")
+  city       City?           @relation(fields: [cityId], references: [id])
+  issueType  ReportIssueType @map("issue_type")
+  message    String?
+  userIpHash String?         @map("user_ip_hash")
+  status     ReportStatus    @default(new)
+  createdAt  DateTime        @default(now()) @map("created_at")
+  updatedAt  DateTime        @updatedAt @map("updated_at")
+
+  @@index([pharmacyId])
+  @@index([cityId])
+  @@index([status, createdAt])
+  @@index([userIpHash, createdAt])
+  @@map("reports")
+}
