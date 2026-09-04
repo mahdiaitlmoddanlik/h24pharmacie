@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint",
     "test": "tsx --test src/lib/dates.test.ts src/lib/neighborhoods.test.ts src/lib/data/index.test.ts src/scripts/parse-saydalia.test.ts src/scripts/parse-telecontact.test.ts",
