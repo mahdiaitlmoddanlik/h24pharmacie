@@ -215,7 +215,7 @@ export async function getDutyPharmacies(
   try {
     const today = moroccoDateISO();
     const periodFilter = prismaPeriodsForFilter(period);
-    const schedules = await prisma.dutySchedule.findMany({
+    let schedules = await prisma.dutySchedule.findMany({
       where: {
         city: { slug: citySlug },
         dutyDate: dateFromISO(today),
@@ -227,6 +227,30 @@ export async function getDutyPharmacies(
         source: true,
       },
     });
+
+    // Fallback for past-midnight / new calendar day before scrape refreshes:
+    // Display the most recent verified duty schedule (e.g. night duty from previous evening).
+    if (schedules.length === 0) {
+      const latest = await prisma.dutySchedule.findFirst({
+        where: { city: { slug: citySlug } },
+        orderBy: { dutyDate: "desc" },
+        select: { dutyDate: true },
+      });
+      if (latest) {
+        schedules = await prisma.dutySchedule.findMany({
+          where: {
+            city: { slug: citySlug },
+            dutyDate: latest.dutyDate,
+            ...(periodFilter ? { period: { in: periodFilter } } : {}),
+          },
+          include: {
+            city: true,
+            pharmacy: true,
+            source: true,
+          },
+        });
+      }
+    }
 
     return schedules
       .map((schedule) => ({
