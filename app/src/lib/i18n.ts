@@ -69,6 +69,8 @@ type Dict = {
   whatsapp: string;
   reportIssue: string;
   distanceUnknown: string;
+  sortedByDistance: string;
+  clearLocation: string;
   verification: Record<VerificationStatus, string>;
   disclaimerTitle: string;
   disclaimer: string;
@@ -151,6 +153,8 @@ const fr: Dict = {
   whatsapp: "WhatsApp",
   reportIssue: "Signaler une erreur",
   distanceUnknown: "Activez la localisation pour voir la distance",
+  sortedByDistance: "Trié par distance (la plus proche en premier)",
+  clearLocation: "Désactiver le tri GPS",
   verification: {
     unverified: "Non vérifiée",
     source_verified: "Vérifiée (source)",
@@ -250,6 +254,8 @@ const ar: Dict = {
   whatsapp: "واتساب",
   reportIssue: "الإبلاغ عن خطأ",
   distanceUnknown: "فعّل تحديد الموقع لمعرفة المسافة",
+  sortedByDistance: "مرتبة حسب المسافة (الأقرب أولاً)",
+  clearLocation: "إلغاء الترتيب حسب المسافة",
   verification: {
     unverified: "غير مؤكدة",
     source_verified: "مؤكدة (مصدر)",

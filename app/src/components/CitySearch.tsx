@@ -59,8 +59,15 @@ export default function CitySearch({
         const nearest = [...cities].sort(
           (a, b) => haversineDistanceKm(here, a) - haversineDistanceKm(here, b),
         )[0];
+        try {
+          sessionStorage.setItem("user_coords", JSON.stringify(here));
+        } catch {}
         setLocating(false);
-        if (nearest) router.push(cityHref(locale, nearest.slug));
+        if (nearest) {
+          router.push(
+            `${cityHref(locale, nearest.slug)}?lat=${here.latitude}&lng=${here.longitude}`,
+          );
+        }
       },
       () => {
         setLocating(false);
