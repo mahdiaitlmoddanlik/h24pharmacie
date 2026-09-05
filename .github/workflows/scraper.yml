@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      DIRECT_URL: ${{ secrets.DIRECT_URL }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL || vars.DATABASE_URL }}
+      DIRECT_URL: ${{ secrets.DIRECT_URL || vars.DIRECT_URL }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -45,6 +45,6 @@ jobs:
       - name: Run Telecontact Scraper & Update Schedules
         working-directory: app
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL || vars.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL || vars.DIRECT_URL }}
         run: npm run scrape:refresh
