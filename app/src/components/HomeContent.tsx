@@ -10,6 +10,8 @@ import Disclaimer from "@/components/Disclaimer";
 import AdSlot from "@/components/AdSlot";
 import { ChevronRightIcon, ClockIcon, CrossIcon } from "@/components/Icons";
 
+import { websiteJsonLd, faqJsonLd } from "@/lib/seo";
+
 export default async function HomeContent({ locale }: { locale: Locale }) {
   const t = getDict(locale);
   const cities = await getCities();
@@ -20,6 +22,55 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
       count: (await getDutyPharmacies(c.slug)).length,
     })),
   );
+
+  const faqs =
+    locale === "ar"
+      ? [
+          {
+            question: "كيف أجد صيدلية حراسة مفتوحة قريبة مني الآن؟",
+            answer:
+              "اختر مدينتك من القائمة أعلاه (مثل الدار البيضاء، الرباط، مراكش، طنجة، فاس، أكادير)، وستظهر لك فوراً قائمة صيدليات الحراسة العاملة اليوم مع العناوين الدقيقة، أرقام الهواتف المباشرة، وروابط خرائط Google وWaze.",
+          },
+          {
+            question: "كيف يعمل نظام الحراسة للصيدليات في المغرب؟",
+            answer:
+              "تخضع الصيدليات في المغرب لجدول حراسة دوري معتمد من نقابات الصيادلة والسلطات المحلية لضمان التغطية الصحية المستمرة على مدار 24 ساعة (حراسة نهارية، حراسة ليلية، وخدمة 24/24).",
+          },
+          {
+            question: "هل معلومات الصيدليات وأرقام الهواتف محدثة يومياً؟",
+            answer:
+              "نعم، يتم تحديث بيانات صيدليات الحراسة على منصة H24 Pharmacie بانتظام يومياً من المصادر الرسمية لنقابات الصيادلة لمساعدتكم في الوصول لأقرب صيدلية مفتوحة.",
+          },
+          {
+            question: "هل توجد زيادة في أسعار الأدوية أثناء الحراسة الليلية؟",
+            answer:
+              "تحدد وزارة الصحة وقوانين الصيدلة بالمغرب تعرفة رسمية لخدمة الحراسة الليلية تضاف قانونياً للوصفات الطبية لتعويض دوام الصيدلي وفريقه ليلاً.",
+          },
+        ]
+      : [
+          {
+            question: "Comment trouver rapidement une pharmacie de garde ouverte près de moi ?",
+            answer:
+              "Sélectionnez votre ville ci-dessus (Casablanca, Rabat, Marrakech, Tanger, Fès, Agadir). H24 Pharmacie affiche immédiatement les officines de garde avec leur numéro de téléphone direct, leur adresse précise et un lien GPS (Google Maps et Waze).",
+          },
+          {
+            question: "Comment fonctionnent les tours de garde au Maroc ?",
+            answer:
+              "Au Maroc, les pharmacies sont réparties par secteurs et assurent des permanences définies par les syndicats des pharmaciens d'officine : garde de jour (dimanches et jours fériés), garde de nuit et officines 24h/24.",
+          },
+          {
+            question: "Les listes de garde sont-elles vérifiées et fiables ?",
+            answer:
+              "Oui, nos listes sont actualisées quotidiennement à partir des relevés officiels des syndicats de pharmaciens. Nous recommandons toutefois d'appeler l'officine avant tout déplacement pour vérifier la disponibilité de vos médicaments.",
+          },
+          {
+            question: "Existe-t-il une majoration de nuit sur les médicaments ?",
+            answer:
+              "Oui, un honoraire légal de garde de nuit (forfait d'urgence fixé par la réglementation marocaine) s'applique aux ordonnances délivrées en dehors des heures habituelles d'ouverture.",
+          },
+        ];
+
+  const jsonLd = [websiteJsonLd(locale), faqJsonLd(faqs)];
 
   return (
     <>
@@ -93,30 +144,44 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
           {/* Disclaimer */}
           <Disclaimer locale={locale} />
 
-          {/* SEO intro */}
-          <section className="rounded-card border border-border bg-surface p-6 shadow-soft">
-            <h2 className="text-lg font-extrabold tracking-tight text-foreground">
+          {/* SEO FAQ Section */}
+          <section className="rounded-card border border-border bg-surface p-6 shadow-soft sm:p-8">
+            <h2 className="text-xl font-extrabold tracking-tight text-foreground sm:text-2xl">
               {locale === "ar"
-                ? "كيف تجد صيدلية الحراسة بالمغرب؟"
-                : "Comment trouver une pharmacie de garde au Maroc ?"}
+                ? "الأسئلة الشائعة حول صيدليات الحراسة بالمغرب"
+                : "Questions fréquentes sur les pharmacies de garde au Maroc"}
             </h2>
-            <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted">
-              <p>
-                {locale === "ar"
-                  ? "تتناوب الصيدليات في المغرب على نظام الحراسة لضمان توفر صيدلية مفتوحة في كل وقت، نهاراً وليلاً. اختر مدينتك أعلاه لعرض قائمة محدّثة بصيدليات الحراسة القريبة منك مع العنوان ورقم الهاتف والاتجاهات."
-                  : "Au Maroc, les pharmacies fonctionnent par roulement de garde afin qu'une pharmacie soit toujours ouverte, de jour comme de nuit. Sélectionnez votre ville ci-dessus pour afficher la liste à jour des pharmacies de garde proches de vous, avec adresse, téléphone et itinéraire."}
-              </p>
-              <p>
-                {locale === "ar"
-                  ? "تتغيّر قائمة الحراسة يومياً، لذا ننصح دائماً بالاتصال بالصيدلية قبل التنقل للتأكد من أنها مفتوحة."
-                  : "La liste de garde change chaque jour : nous vous recommandons toujours d'appeler la pharmacie avant de vous déplacer pour confirmer qu'elle est bien ouverte."}
-              </p>
+            <p className="mt-1 text-sm text-muted">
+              {locale === "ar"
+                ? "كل ما تحتاج لمعرفته حول مواعيد الحراسة، المناوبة الليلية، والخدمات الصحية 24/24."
+                : "Tout ce que vous devez savoir sur le fonctionnement, les horaires et les urgences de garde."}
+            </p>
+
+            <div className="mt-6 space-y-4">
+              {faqs.map((faq, i) => (
+                <div
+                  key={i}
+                  className="rounded-xl border border-border/80 bg-surface-muted/50 p-4 transition hover:border-primary/40"
+                >
+                  <h3 className="text-base font-bold text-foreground">
+                    {faq.question}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {faq.answer}
+                  </p>
+                </div>
+              ))}
             </div>
           </section>
         </div>
       </main>
 
       <Footer locale={locale} />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     </>
   );
 }

@@ -117,8 +117,8 @@ type Dict = {
 };
 
 const fr: Dict = {
-  brand: "Pharmacies de Garde",
-  tagline: "Maroc",
+  brand: "H24 Pharmacie",
+  tagline: "Pharmacies de garde au Maroc",
   hero: {
     title: "Pharmacies de garde au Maroc",
     subtitle: "Trouvez rapidement une pharmacie ouverte près de vous",
@@ -178,7 +178,7 @@ const fr: Dict = {
   footer: {
     about: "À propos",
     aboutText:
-      "Pharmacies de Garde Maroc vous aide à trouver rapidement une pharmacie ouverte, de jour comme de nuit, dans les principales villes du Maroc.",
+      "H24 Pharmacie vous aide à trouver rapidement une pharmacie ouverte, de jour comme de nuit (24h/24), dans les principales villes du Maroc.",
     legal: "Informations légales",
     privacy: "Confidentialité",
     terms: "Conditions d'utilisation",
@@ -216,8 +216,8 @@ const fr: Dict = {
 };
 
 const ar: Dict = {
-  brand: "صيدليات الحراسة",
-  tagline: "المغرب",
+  brand: "H24 Pharmacie",
+  tagline: "صيدليات الحراسة بالمغرب",
   hero: {
     title: "صيدليات الحراسة بالمغرب",
     subtitle: "اعثر بسرعة على صيدلية مفتوحة بالقرب منك",
@@ -276,7 +276,7 @@ const ar: Dict = {
   footer: {
     about: "حول",
     aboutText:
-      "صيدليات الحراسة المغرب يساعدك على العثور بسرعة على صيدلية مفتوحة، نهاراً وليلاً، في كبرى المدن المغربية.",
+      "H24 Pharmacie يساعدكم في العثور السريع على صيدلية حراسة مفتوحة، ليلاً ونهاراً (24/24)، في كبرى مدن المملكة المغربية.",
     legal: "معلومات قانونية",
     privacy: "الخصوصية",
     terms: "شروط الاستخدام",

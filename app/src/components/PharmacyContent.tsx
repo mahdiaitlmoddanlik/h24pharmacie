@@ -21,7 +21,7 @@ import {
   buildWazeUrl,
   buildWhatsAppUrl,
 } from "@/lib/geo";
-import { breadcrumbJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, pharmacyJsonLd } from "@/lib/seo";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Disclaimer from "@/components/Disclaimer";
@@ -72,11 +72,14 @@ export default async function PharmacyContent({
     pharmacy.verificationStatus === "pharmacy_claimed" ||
     pharmacy.verificationStatus === "source_verified";
 
-  const jsonLd = breadcrumbJsonLd([
-    { name: t.nav.home, url: homeHref(locale) },
-    { name: cityName, url: cityHref(locale, city.slug) },
-    { name: pharmacy.name, url: pharmacyHref(locale, city.slug, pharmacy.slug) },
-  ]);
+  const jsonLd = [
+    pharmacyJsonLd(pharmacy, city, locale, duty),
+    breadcrumbJsonLd([
+      { name: t.nav.home, url: homeHref(locale) },
+      { name: cityName, url: cityHref(locale, city.slug) },
+      { name: pharmacy.name, url: pharmacyHref(locale, city.slug, pharmacy.slug) },
+    ]),
+  ];
 
   return (
     <>

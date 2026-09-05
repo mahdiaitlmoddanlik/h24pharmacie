@@ -121,7 +121,7 @@ export default function MentionsLegalesContent({ locale }: { locale: Locale }) {
               <section className="rounded-card border border-border bg-surface p-6 shadow-soft space-y-4">
                 <h2 className="text-lg font-bold text-foreground">1. Nature du service et attribution des sources</h2>
                 <p className="text-sm text-muted">
-                  <strong>Pharmacies de Garde Maroc</strong> est une initiative citoyenne et indépendante conçue pour faciliter l’accès rapide aux officines de garde (jour, nuit, 24h/24) à travers le Royaume du Maroc.
+                  <strong>H24 Pharmacie Maroc</strong> est une initiative citoyenne et indépendante conçue pour faciliter l’accès rapide aux officines de garde (jour, nuit, 24h/24) à travers le Royaume du Maroc.
                 </p>
                 <p className="text-sm text-muted">
                   Les données factuelles d’intérêt public (noms, adresses, téléphones, coordonnées GPS) sont indexées à partir de sources publiques consultables par tous (notamment Telecontact.ma). Nous mettons un point d’honneur à citer systématiquement la source originale ainsi que la date et l’heure du dernier relevé vérifié.

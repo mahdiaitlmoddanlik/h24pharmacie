@@ -1,7 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Locale } from "@/lib/types";
 import { getDict, homeHref, legalHref } from "@/lib/i18n";
-import { CrossIcon } from "@/components/Icons";
 
 export default function Footer({ locale }: { locale: Locale }) {
   const t = getDict(locale);
@@ -13,12 +13,27 @@ export default function Footer({ locale }: { locale: Locale }) {
         <div>
           <Link
             href={homeHref(locale)}
-            className="flex items-center gap-2 text-foreground"
+            className="inline-flex items-center gap-3 text-foreground transition hover:opacity-90"
+            aria-label={t.brand}
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-lg text-white">
-              <CrossIcon />
-            </span>
-            <span className="font-extrabold">{t.brand}</span>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 p-1">
+              <Image
+                src="/logo-icon.png"
+                alt="H24 Pharmacie"
+                width={36}
+                height={36}
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div className="leading-tight">
+              <span className="flex items-center gap-1 text-lg font-black tracking-tight">
+                <span className="text-[#02604f]">h24</span>
+                <span className="text-[#504e4e]">pharmacie</span>
+              </span>
+              <span className="block text-[11px] font-medium text-muted">
+                {t.tagline}
+              </span>
+            </div>
           </Link>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">
             {t.footer.aboutText}
@@ -62,7 +77,7 @@ export default function Footer({ locale }: { locale: Locale }) {
         <div className="mx-auto max-w-5xl px-4 py-5 text-xs leading-relaxed text-muted">
           <p>{t.footer.sourcesNote}</p>
           <p className="mt-2">
-            © {year} {t.brand} {t.tagline}. {t.footer.rights}
+            © {year} {t.brand}. {t.footer.rights}
           </p>
         </div>
       </div>

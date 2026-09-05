@@ -5,7 +5,7 @@ import { absoluteUrl } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Mentions légales & Politique de confidentialité",
   description:
-    "Mentions légales, conditions d'utilisation, avertissement médical et politique de confidentialité du service Pharmacies de Garde Maroc.",
+    "Mentions légales, conditions d'utilisation, avertissement médical et politique de confidentialité de la plateforme H24 Pharmacie Maroc.",
   alternates: {
     canonical: absoluteUrl("/mentions-legales"),
     languages: {

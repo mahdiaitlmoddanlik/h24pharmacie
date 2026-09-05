@@ -16,7 +16,7 @@ import {
   lastUpdatedFor,
 } from "@/lib/data";
 import { getCityZones } from "@/lib/data/city-zones";
-import { breadcrumbJsonLd, cityJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, cityJsonLd, faqJsonLd } from "@/lib/seo";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Disclaimer from "@/components/Disclaimer";
@@ -47,8 +47,40 @@ export default async function CityContent({
   const cityName = locale === "ar" ? city.nameAr : city.nameFr;
   const related = allCities.filter((c) => c.id !== city.id);
 
+  const cityFaqs =
+    locale === "ar"
+      ? [
+          {
+            question: `كيف أعرف صيدلية الحراسة المفتوحة هذه الليلة في ${cityName}؟`,
+            answer: `تحتوي القائمة أعلاه على جميع صيدليات الحراسة العاملة في ${cityName} الليلة. يمكنك تصفية النتائج حسب الفترة (ليل، نهار، أو 24 ساعة) واستخدام زر الاتصال المباشر ومسار GPS عبر Google Maps وWaze.`,
+          },
+          {
+            question: `ما هي أوقات دوام صيدليات الحراسة في ${cityName}؟`,
+            answer: `تبدأ حراسة النهار عادة من 08:30 صباحاً إلى 20:00 مساءً، بينما تبدأ الحراسة الليلية من 20:00 مساءً حتى صباح اليوم التالي. كما تتوفر صيدليات بنظام 24/24.`,
+          },
+          {
+            question: `هل يجب الاتصال بالصيدلية قبل التوجه إليها في ${cityName}؟`,
+            answer: `نعم، ننصح دائماً بالاتصال المسبق عبر رقم الهاتف المبيّن للتأكد من توفر الدواء المطلوب قبل التنقل.`,
+          },
+        ]
+      : [
+          {
+            question: `Comment trouver une pharmacie de garde ouverte cette nuit à ${cityName} ?`,
+            answer: `Consultez la liste ci-dessus en activant le filtre « Nuit » ou « 24h/24 ». H24 Pharmacie affiche l'adresse exacte, le numéro de téléphone direct et l'itinéraire GPS (Google Maps / Waze) vers chaque officine de garde à ${cityName}.`,
+          },
+          {
+            question: `Quels sont les horaires des pharmacies de garde à ${cityName} ?`,
+            answer: `La garde de jour assure le service en journée (08h30 - 20h00), et la garde de nuit prend le relais de 20h00 jusqu'au lendemain matin. Certaines officines assurent une permanence continue 24h/24.`,
+          },
+          {
+            question: `Faut-il appeler la pharmacie avant de se déplacer à ${cityName} ?`,
+            answer: `Oui, nous recommandons systématiquement d'appeler la pharmacie au préalable pour confirmer la disponibilité des produits et ordonnances nécessaires.`,
+          },
+        ];
+
   const jsonLd = [
     cityJsonLd(city, locale, duties),
+    faqJsonLd(cityFaqs),
     breadcrumbJsonLd([
       { name: t.nav.home, url: homeHref(locale) },
       { name: cityName, url: cityHref(locale, city.slug) },
@@ -127,6 +159,30 @@ export default async function CityContent({
             )}
             <p className="mt-2 leading-relaxed">{t.seoIntro(cityName)}</p>
           </div>
+
+          {/* SEO FAQ Section */}
+          <section className="rounded-card border border-border bg-surface p-6 shadow-soft">
+            <h2 className="text-lg font-extrabold tracking-tight text-foreground sm:text-xl">
+              {locale === "ar"
+                ? `الأسئلة الشائعة حول صيدليات الحراسة في ${cityName}`
+                : `Questions fréquentes sur les pharmacies de garde à ${cityName}`}
+            </h2>
+            <div className="mt-4 space-y-3">
+              {cityFaqs.map((faq, i) => (
+                <div
+                  key={i}
+                  className="rounded-xl border border-border/80 bg-surface-muted/50 p-4 transition hover:border-primary/40"
+                >
+                  <h3 className="text-sm font-bold text-foreground">
+                    {faq.question}
+                  </h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted sm:text-sm">
+                    {faq.answer}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
 
           {/* Related cities */}
           <section>
