@@ -83,32 +83,32 @@ export default function ContactContent({ locale }: { locale: Locale }) {
           </section>
 
           {/* Emergency reminder */}
-          <section className="rounded-card border border-amber-500/20 bg-amber-500/10 p-6 text-amber-950 dark:text-amber-200">
-            <h3 className="text-base font-bold flex items-center gap-2">
+          <section className="rounded-card border border-amber-300 bg-amber-50 p-6 text-amber-950 shadow-xs">
+            <h3 className="text-base font-bold flex items-center gap-2 text-amber-950">
               <span>⚠️</span>
               <span>{isAr ? "في حالات الطوارئ الطبية الحرجة" : "En cas d'urgence médicale vitale"}</span>
             </h3>
-            <p className="mt-2 text-sm">
+            <p className="mt-2 text-sm leading-relaxed text-amber-900">
               {isAr
                 ? "H24 Pharmacie هو دليل إرشادي لمساعدتكم في الوصول إلى الصيدليات. في الحالات الطارئة الحرجة، يرجى الاتصال الفوري بأرقام الإسعاف الوطنية:"
                 : "H24 Pharmacie est un service d'orientation vers les officines de garde. En cas d'urgence vitale, contactez directement les services de secours :"}
             </p>
             <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
-              <div className="rounded-lg bg-white/60 p-2 text-center shadow-xs dark:bg-black/20">
-                <span className="block text-muted">{isAr ? "الإسعاف (SAMU)" : "SAMU (Urgences)"}</span>
-                <strong className="text-base text-foreground">141</strong>
+              <div className="rounded-lg border border-amber-200 bg-white p-2.5 text-center shadow-xs">
+                <span className="block text-xs font-medium text-amber-800">{isAr ? "الإسعاف (SAMU)" : "SAMU (Urgences)"}</span>
+                <strong className="text-lg font-black text-amber-950">141</strong>
               </div>
-              <div className="rounded-lg bg-white/60 p-2 text-center shadow-xs dark:bg-black/20">
-                <span className="block text-muted">{isAr ? "الوقاية المدنية" : "Protection Civile"}</span>
-                <strong className="text-base text-foreground">15</strong>
+              <div className="rounded-lg border border-amber-200 bg-white p-2.5 text-center shadow-xs">
+                <span className="block text-xs font-medium text-amber-800">{isAr ? "الوقاية المدنية" : "Protection Civile"}</span>
+                <strong className="text-lg font-black text-amber-950">15</strong>
               </div>
-              <div className="rounded-lg bg-white/60 p-2 text-center shadow-xs dark:bg-black/20">
-                <span className="block text-muted">{isAr ? "الشرطة" : "Police Secours"}</span>
-                <strong className="text-base text-foreground">19</strong>
+              <div className="rounded-lg border border-amber-200 bg-white p-2.5 text-center shadow-xs">
+                <span className="block text-xs font-medium text-amber-800">{isAr ? "الشرطة" : "Police Secours"}</span>
+                <strong className="text-lg font-black text-amber-950">19</strong>
               </div>
-              <div className="rounded-lg bg-white/60 p-2 text-center shadow-xs dark:bg-black/20">
-                <span className="block text-muted">{isAr ? "الدرك الملكي" : "Gendarmerie"}</span>
-                <strong className="text-base text-foreground">177</strong>
+              <div className="rounded-lg border border-amber-200 bg-white p-2.5 text-center shadow-xs">
+                <span className="block text-xs font-medium text-amber-800">{isAr ? "الدرك الملكي" : "Gendarmerie"}</span>
+                <strong className="text-lg font-black text-amber-950">177</strong>
               </div>
             </div>
           </section>

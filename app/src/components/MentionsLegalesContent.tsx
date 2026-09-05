@@ -42,21 +42,21 @@ export default function MentionsLegalesContent({ locale }: { locale: Locale }) {
           {isAr ? (
             <div className="space-y-8 text-foreground leading-relaxed">
               {/* Emergency Warning */}
-              <section className="rounded-card border border-amber-500/20 bg-amber-500/10 p-6 text-amber-950 dark:text-amber-200">
-                <h2 className="text-lg font-bold flex items-center gap-2">
+              <section className="rounded-card border border-amber-300 bg-amber-50 p-6 text-amber-950 shadow-xs">
+                <h2 className="text-lg font-bold flex items-center gap-2 text-amber-950">
                   <span>⚠️</span> تنبيه هام وإخلاء مسؤولية طبية
                 </h2>
-                <p className="mt-2 text-sm">
+                <p className="mt-2 text-sm leading-relaxed text-amber-900">
                   المعلومات المنشورة على هذا الموقع مقدمة <strong>للمساعدة والاستئناس فقط</strong> وقد يطرأ عليها أي تغيير طارئ من طرف نقابات أو مفتشيات الصيدليات.
                 </p>
-                <p className="mt-2 text-sm font-semibold">
+                <p className="mt-2 text-sm font-semibold text-amber-950">
                   يرجى دائماً الاتصال بالصيدلية عبر الهاتف قبل التوجه إليها للتأكد من فتح أبوابها وتوفر الأدوية المطلوبة.
                 </p>
-                <div className="mt-3 text-xs border-t border-amber-500/20 pt-2 flex flex-wrap gap-4">
-                  <span>الإسعاف الطبي (SAMU): <strong>141</strong></span>
-                  <span>الوقاية المدنية: <strong>15</strong></span>
-                  <span>الشرطة: <strong>19</strong></span>
-                  <span>الدرك الملكي: <strong>177</strong></span>
+                <div className="mt-3 text-xs border-t border-amber-200 pt-2 flex flex-wrap gap-4 text-amber-900 font-medium">
+                  <span>الإسعاف الطبي (SAMU): <strong className="font-bold text-amber-950">141</strong></span>
+                  <span>الوقاية المدنية: <strong className="font-bold text-amber-950">15</strong></span>
+                  <span>الشرطة: <strong className="font-bold text-amber-950">19</strong></span>
+                  <span>الدرك الملكي: <strong className="font-bold text-amber-950">177</strong></span>
                 </div>
               </section>
 
@@ -99,21 +99,21 @@ export default function MentionsLegalesContent({ locale }: { locale: Locale }) {
           ) : (
             <div className="space-y-8 text-foreground leading-relaxed">
               {/* Emergency Warning */}
-              <section className="rounded-card border border-amber-500/20 bg-amber-500/10 p-6 text-amber-950 dark:text-amber-200">
-                <h2 className="text-lg font-bold flex items-center gap-2">
+              <section className="rounded-card border border-amber-300 bg-amber-50 p-6 text-amber-950 shadow-xs">
+                <h2 className="text-lg font-bold flex items-center gap-2 text-amber-950">
                   <span>⚠️</span> Avertissement & Responsabilité Médicale
                 </h2>
-                <p className="mt-2 text-sm">
+                <p className="mt-2 text-sm leading-relaxed text-amber-900">
                   Les horaires et listes de garde sont diffusés <strong>à titre purement indicatif</strong>. Les plannings officiels peuvent faire l’objet de modifications inopinées par les conseils régionaux de l’Ordre des pharmaciens.
                 </p>
-                <p className="mt-2 text-sm font-semibold">
+                <p className="mt-2 text-sm font-semibold text-amber-950">
                   Il est impératif d’appeler l’officine par téléphone avant tout déplacement afin de vous assurer de son ouverture effective.
                 </p>
-                <div className="mt-3 text-xs border-t border-amber-500/20 pt-2 flex flex-wrap gap-4">
-                  <span>SAMU Urgences Médicales: <strong>141</strong></span>
-                  <span>Protection Civile (Pompiers): <strong>15</strong></span>
-                  <span>Police Secours: <strong>19</strong></span>
-                  <span>Gendarmerie Royale: <strong>177</strong></span>
+                <div className="mt-3 text-xs border-t border-amber-200 pt-2 flex flex-wrap gap-4 text-amber-900 font-medium">
+                  <span>SAMU Urgences Médicales: <strong className="font-bold text-amber-950">141</strong></span>
+                  <span>Protection Civile (Pompiers): <strong className="font-bold text-amber-950">15</strong></span>
+                  <span>Police Secours: <strong className="font-bold text-amber-950">19</strong></span>
+                  <span>Gendarmerie Royale: <strong className="font-bold text-amber-950">177</strong></span>
                 </div>
               </section>
 
