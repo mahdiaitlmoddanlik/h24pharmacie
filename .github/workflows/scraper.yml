@@ -10,22 +10,9 @@ jobs:
   scrape:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL || vars.DATABASE_URL }}
-      DIRECT_URL: ${{ secrets.DIRECT_URL || vars.DIRECT_URL }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Verify Secrets Configuration
-        run: |
-          if [ -z "$DATABASE_URL" ]; then
-            echo "::error::Le secret DATABASE_URL n'a pas été trouvé dans GitHub Settings > Secrets and variables > Actions !"
-            echo "Veuillez vérifier que le secret s'appelle exactement DATABASE_URL et qu'il est bien enregistré."
-            exit 1
-          else
-            echo "Secret DATABASE_URL détecté avec succès."
-          fi
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -44,7 +31,23 @@ jobs:
 
       - name: Run Telecontact Scraper & Update Schedules
         working-directory: app
+        run: |
+          # Resolve connection string from secret or variable
+          if [ -n "$DB_FROM_SECRET" ]; then
+            export DATABASE_URL="$DB_FROM_SECRET"
+          elif [ -n "$DB_FROM_VAR" ]; then
+            export DATABASE_URL="$DB_FROM_VAR"
+          fi
+
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::DATABASE_URL est introuvable dans les secrets ou variables GitHub !"
+            echo "Veuillez vous assurer que DATABASE_URL est renseigne dans GitHub > Settings > Secrets and variables > Actions"
+            exit 1
+          fi
+
+          echo "DATABASE_URL detecte avec succes (longueur: ${#DATABASE_URL} caracteres)."
+          npm run scrape:refresh
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL || vars.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL || vars.DIRECT_URL }}
-        run: npm run scrape:refresh
+          DB_FROM_SECRET: ${{ secrets.DATABASE_URL }}
+          DB_FROM_VAR: ${{ vars.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
