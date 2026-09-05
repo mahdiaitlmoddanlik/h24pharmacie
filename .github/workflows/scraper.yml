@@ -45,9 +45,13 @@ jobs:
             exit 1
           fi
 
+          if [ -n "$DIRECT_FROM_SECRET" ]; then
+            export DIRECT_URL="$DIRECT_FROM_SECRET"
+          fi
+
           echo "DATABASE_URL detecte avec succes (longueur: ${#DATABASE_URL} caracteres)."
           npm run scrape:refresh
         env:
           DB_FROM_SECRET: ${{ secrets.DATABASE_URL }}
           DB_FROM_VAR: ${{ vars.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          DIRECT_FROM_SECRET: ${{ secrets.DIRECT_URL }}

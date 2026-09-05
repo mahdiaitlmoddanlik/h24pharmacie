@@ -36,11 +36,23 @@ function prismaPeriod(period: string): "day" | "night" | "h24" | "unknown" {
   return period === "24h" ? "h24" : "unknown";
 }
 
+function normalizeConnectionString(url?: string): string | undefined {
+  if (!url) return undefined;
+  if (url.includes("sslmode=require") && !url.includes("uselibpqcompat=true")) {
+    return url.replace("sslmode=require", "sslmode=no-verify");
+  }
+  return url;
+}
+
 async function main() {
-  const connectionString = process.env.DIRECT_URL ?? process.env.DATABASE_URL;
-  if (!connectionString) {
+  const rawConnectionString =
+    (process.env.DIRECT_URL && process.env.DIRECT_URL.trim()) ||
+    (process.env.DATABASE_URL && process.env.DATABASE_URL.trim());
+
+  if (!rawConnectionString) {
     throw new Error("Set DIRECT_URL or DATABASE_URL before updating duty schedules.");
   }
+  const connectionString = normalizeConnectionString(rawConnectionString);
 
   const filePath = resolve(argValue("--file") ?? "tmp/telecontact-latest.json");
   const snapshot = JSON.parse(await readFile(filePath, "utf8")) as TelecontactSnapshot;

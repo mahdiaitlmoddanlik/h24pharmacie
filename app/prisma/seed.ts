@@ -13,7 +13,9 @@ const SOURCE = {
   type: "website" as const,
 };
 
-const connectionString = process.env.DIRECT_URL ?? process.env.DATABASE_URL;
+const connectionString =
+  (process.env.DIRECT_URL && process.env.DIRECT_URL.trim()) ||
+  (process.env.DATABASE_URL && process.env.DATABASE_URL.trim());
 
 if (!connectionString) {
   throw new Error("Set DIRECT_URL or DATABASE_URL before running prisma seed.");
