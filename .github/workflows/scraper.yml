@@ -10,9 +10,22 @@ jobs:
   scrape:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DIRECT_URL: ${{ secrets.DIRECT_URL }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Verify Secrets Configuration
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Le secret DATABASE_URL n'a pas été trouvé dans GitHub Settings > Secrets and variables > Actions !"
+            echo "Veuillez vérifier que le secret s'appelle exactement DATABASE_URL et qu'il est bien enregistré."
+            exit 1
+          else
+            echo "Secret DATABASE_URL détecté avec succès."
+          fi
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
