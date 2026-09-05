@@ -67,7 +67,7 @@ export default function MentionsLegalesContent({ locale }: { locale: Locale }) {
                   موقع <strong>صيدليات الحراسة المغرب</strong> منصة إرشادية مجانية ومفتوحة لعموم المواطنين، تهدف لتيسير الوصول السريع إلى صيدليات الحراسة النهارية والليلية في مختلف المدن المغربية.
                 </p>
                 <p className="text-sm text-muted">
-                  تُجمع المعطيات الواردة من مصادر عمومية معتمدة ومفتوحة (بما فيها Telecontact.ma واللوائح المنشورة محلياً). نقوم بفرز البيانات وتصحيحها ومطابقتها دورياً مع حفظ الإشارة الواضحة لمصدر المعلومة وتاريخ آخر تحديث.
+                  تُجمع المعطيات الواردة من مصادر عمومية معتمدة ومفتوحة (بما فيها نقابة صيادلة مراكش، Telecontact.ma، وبلاغات الهيئات المهنية المحلية). نقوم بتنسيق وتحديث البيانات بانتظام لتيسير وصول المواطنين للخدمات الصحية الاستعجالية.
                 </p>
               </section>
 
@@ -124,7 +124,7 @@ export default function MentionsLegalesContent({ locale }: { locale: Locale }) {
                   <strong>H24 Pharmacie Maroc</strong> est une initiative citoyenne et indépendante conçue pour faciliter l’accès rapide aux officines de garde (jour, nuit, 24h/24) à travers le Royaume du Maroc.
                 </p>
                 <p className="text-sm text-muted">
-                  Les données factuelles d’intérêt public (noms, adresses, téléphones, coordonnées GPS) sont indexées à partir de sources publiques consultables par tous (notamment Telecontact.ma). Nous mettons un point d’honneur à citer systématiquement la source originale ainsi que la date et l’heure du dernier relevé vérifié.
+                  Les données factuelles d’intérêt public (noms, adresses, téléphones, coordonnées GPS) sont indexées à partir de sources publiques consultables par tous (notamment le Syndicat des Pharmaciens de Marrakech, Telecontact.ma et les publications officielles locales). Ces informations sont centralisées dans le but exclusif de faciliter l'accès aux soins d'urgence des citoyens.
                 </p>
               </section>
 

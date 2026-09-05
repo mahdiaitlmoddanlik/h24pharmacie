@@ -7,6 +7,7 @@ import {
   formatRelativeTime,
   getDict,
   homeHref,
+  legalHref,
 } from "@/lib/i18n";
 import {
   SOURCE,
@@ -112,27 +113,13 @@ export default async function CityContent({
                   {t.lastUpdated}: {formatRelativeTime(updated, locale)}
                 </span>
               )}
-              {city.slug === "marrakech" ? (
-                <a
-                  href="https://www.syndicat-pharmaciens-marrakech.com"
-                  target="_blank"
-                  rel="noopener noreferrer nofollow"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-100 ring-1 ring-emerald-400/40 transition hover:bg-emerald-400/30 hover:text-white"
-                >
-                  <ShieldCheckIcon className="text-sm text-emerald-300" />
-                  {t.source}: {locale === "ar" ? "نقابة صيادلة مراكش (رسمي)" : "Syndicat des Pharmaciens de Marrakech (Officiel)"}
-                </a>
-              ) : (
-                <a
-                  href={SOURCE.baseUrl}
-                  target="_blank"
-                  rel="noopener noreferrer nofollow"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/25 transition hover:bg-white/25"
-                >
-                  <ShieldCheckIcon className="text-sm" />
-                  {t.source}: {SOURCE.name}
-                </a>
-              )}
+              <Link
+                href={legalHref(locale)}
+                className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-100 ring-1 ring-emerald-400/40 transition hover:bg-emerald-400/30 hover:text-white"
+              >
+                <ShieldCheckIcon className="text-sm text-emerald-300" />
+                {locale === "ar" ? "قائمة حراسة مؤكدة" : "Garde vérifiée"}
+              </Link>
             </div>
           </div>
         </section>
@@ -154,21 +141,17 @@ export default async function CityContent({
             {updated ? (
               <p>
                 <strong className="font-semibold text-foreground">
-                  {t.source}:
+                  {t.lastUpdated}:
                 </strong>{" "}
-                <a
-                  href={city.slug === "marrakech" ? "https://www.syndicat-pharmaciens-marrakech.com" : SOURCE.baseUrl}
-                  target="_blank"
-                  rel="noopener noreferrer nofollow"
-                  className="text-primary-dark underline"
+                {formatDateTime(updated, locale)} ·{" "}
+                <Link
+                  href={legalHref(locale)}
+                  className="text-primary-dark underline hover:opacity-80"
                 >
-                  {city.slug === "marrakech"
-                    ? locale === "ar"
-                      ? "نقابة صيادلة مراكش (رسمي)"
-                      : "Syndicat des Pharmaciens de Marrakech (Officiel)"
-                    : SOURCE.name}
-                </a>{" "}
-                · {t.lastUpdated}: {formatDateTime(updated, locale)}
+                  {locale === "ar"
+                    ? "مصادر البيانات والمعلومات القانونية"
+                    : "Sources & Mentions légales"}
+                </Link>
               </p>
             ) : (
               <p className="font-medium text-foreground">{t.dutyUnavailable}</p>

@@ -62,21 +62,9 @@ export default function PharmacyCard({
               </span>
             )}
             {verified && (
-              <span
-                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${
-                  isMarrakechSyndicat
-                    ? "bg-emerald-100 text-emerald-900 ring-1 ring-emerald-600/20"
-                    : "bg-emerald-50 text-primary-dark"
-                }`}
-              >
-                <ShieldCheckIcon
-                  className={`text-sm ${isMarrakechSyndicat ? "text-emerald-600" : ""}`}
-                />
-                {isMarrakechSyndicat
-                  ? locale === "ar"
-                    ? "رسمي (نقابة مراكش)"
-                    : "Officiel (Syndicat)"
-                  : t.verification[pharmacy.verificationStatus]}
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-primary-dark ring-1 ring-emerald-600/20">
+                <ShieldCheckIcon className="text-sm text-emerald-600" />
+                {locale === "ar" ? "مؤكدة" : "Vérifiée"}
               </span>
             )}
           </div>

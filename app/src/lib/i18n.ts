@@ -36,6 +36,10 @@ export function legalHref(locale: Locale): string {
   return `${localePrefix(locale)}/mentions-legales`;
 }
 
+export function contactHref(locale: Locale): string {
+  return `${localePrefix(locale)}/contact`;
+}
+
 type Dict = {
   brand: string;
   tagline: string;

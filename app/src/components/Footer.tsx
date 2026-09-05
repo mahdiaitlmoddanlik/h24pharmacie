@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Locale } from "@/lib/types";
-import { getDict, homeHref, legalHref } from "@/lib/i18n";
+import { contactHref, getDict, homeHref, legalHref } from "@/lib/i18n";
 
 export default function Footer({ locale }: { locale: Locale }) {
   const t = getDict(locale);
@@ -63,7 +63,7 @@ export default function Footer({ locale }: { locale: Locale }) {
             </li>
             <li>
               <Link
-                href={legalHref(locale)}
+                href={contactHref(locale)}
                 className="transition hover:text-primary"
               >
                 {t.footer.contact}
