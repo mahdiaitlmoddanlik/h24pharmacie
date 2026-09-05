@@ -72,7 +72,7 @@ export default function CitySearch({
 
   return (
     <div className="w-full">
-      <div className="relative">
+      <div className="relative z-30">
         <div className="flex items-center gap-2 rounded-2xl bg-white p-2 shadow-lift">
           <div className="pointer-events-none flex items-center pl-2 text-muted">
             <SearchIcon className="text-xl" />
@@ -106,7 +106,7 @@ export default function CitySearch({
         </div>
 
         {open && results.length > 0 && (
-          <ul className="absolute z-20 mt-2 max-h-72 w-full overflow-auto rounded-2xl bg-white py-2 shadow-lift">
+          <ul className="absolute left-0 right-0 z-50 mt-2 max-h-72 w-full overflow-auto rounded-2xl border border-border bg-white py-2 shadow-2xl ring-1 ring-black/5">
             {results.map((c) => (
               <li key={c.id}>
                 <button

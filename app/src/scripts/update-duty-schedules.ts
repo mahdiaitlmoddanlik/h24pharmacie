@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import { cities } from "../lib/data/cities";
 import { dateFromISO, moroccoDateISO } from "../lib/dates";
 import { inferNeighborhood } from "../lib/neighborhoods";
@@ -56,7 +57,11 @@ async function main() {
     throw new Error("Snapshot has an empty city result; refusing to replace live duty schedules.");
   }
 
-  const adapter = new PrismaPg({ connectionString });
+  const pool = new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
+  });
+  const adapter = new PrismaPg(pool);
   const prisma = new PrismaClient({ adapter });
   const dutyDate = dateFromISO(snapshot.dutyDate);
 
@@ -266,6 +271,7 @@ async function main() {
     throw error;
   } finally {
     await prisma.$disconnect();
+    await pool.end().catch(() => {});
   }
 }
 

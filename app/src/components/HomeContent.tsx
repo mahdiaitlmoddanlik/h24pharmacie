@@ -78,7 +78,7 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="hero-bg relative overflow-hidden">
+        <section className="hero-bg relative z-20">
           <div className="mx-auto max-w-3xl px-4 pb-16 pt-12 text-center sm:pt-16">
             <span className="live-dot mx-auto mb-5 inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 text-xs font-semibold text-emerald-50 ring-1 ring-white/25">
               <span className="h-2 w-2 rounded-full bg-emerald-300" />
