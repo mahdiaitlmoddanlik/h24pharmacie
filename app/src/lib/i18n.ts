@@ -53,6 +53,7 @@ type Dict = {
   };
   popularCities: string;
   popularCitiesSub: string;
+  nearYou: string;
   onDutyNow: string;
   pharmacy: string;
   pharmacies: string;
@@ -132,6 +133,7 @@ const fr: Dict = {
   nav: { home: "Accueil", cities: "Villes" },
   popularCities: "Villes populaires",
   popularCitiesSub: "Sélectionnez une ville pour voir les pharmacies de garde",
+  nearYou: "Près de vous",
   onDutyNow: "de garde aujourd'hui",
   pharmacy: "pharmacie",
   pharmacies: "pharmacies",
@@ -233,6 +235,7 @@ const ar: Dict = {
   nav: { home: "الرئيسية", cities: "المدن" },
   popularCities: "المدن الأكثر بحثاً",
   popularCitiesSub: "اختر مدينة لعرض صيدليات الحراسة",
+  nearYou: "بالقرب منك",
   onDutyNow: "في الحراسة اليوم",
   pharmacy: "صيدلية",
   pharmacies: "صيدليات",

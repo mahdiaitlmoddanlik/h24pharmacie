@@ -1,15 +1,15 @@
-import Link from "next/link";
-import type { Locale } from "@/lib/types";
-import { cityHref, getDict } from "@/lib/i18n";
+import { headers } from "next/headers";
+import type { City, Locale } from "@/lib/types";
+import { getDict } from "@/lib/i18n";
 import { formatMoroccoDate } from "@/lib/dates";
 import { getCities, getDutyPharmacies } from "@/lib/data";
+import { haversineDistanceKm } from "@/lib/geo";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CitySearch from "@/components/CitySearch";
+import PopularCities from "@/components/PopularCities";
 import Disclaimer from "@/components/Disclaimer";
 import AdSlot from "@/components/AdSlot";
-import { ChevronRightIcon, ClockIcon, CrossIcon } from "@/components/Icons";
-
 import { websiteJsonLd, faqJsonLd } from "@/lib/seo";
 
 export default async function HomeContent({ locale }: { locale: Locale }) {
@@ -22,6 +22,68 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
       count: (await getDutyPharmacies(c.slug)).length,
     })),
   );
+
+  // Detect user city via Vercel IP Geolocation headers
+  let detectedCitySlug: string | null = null;
+  try {
+    const h = await headers();
+    const ipCity = h.get("x-vercel-ip-city");
+    const ipLat = h.get("x-vercel-ip-latitude");
+    const ipLng = h.get("x-vercel-ip-longitude");
+
+    if (ipLat && ipLng) {
+      const lat = parseFloat(ipLat);
+      const lng = parseFloat(ipLng);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const sorted = [...cities].sort(
+          (a, b) =>
+            haversineDistanceKm({ latitude: lat, longitude: lng }, a) -
+            haversineDistanceKm({ latitude: lat, longitude: lng }, b),
+        );
+        if (
+          sorted[0] &&
+          haversineDistanceKm({ latitude: lat, longitude: lng }, sorted[0]) < 200
+        ) {
+          detectedCitySlug = sorted[0].slug;
+        }
+      }
+    }
+
+    if (!detectedCitySlug && ipCity) {
+      const norm = ipCity
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+      const aliases: Record<string, string> = {
+        tangier: "tanger",
+        tangiers: "tanger",
+        fez: "fes",
+        marrakesh: "marrakech",
+        casablanca: "casablanca",
+        rabat: "rabat",
+        agadir: "agadir",
+        sale: "rabat",
+        temara: "rabat",
+        kenitra: "rabat",
+        mohammedia: "casablanca",
+      };
+      const target = aliases[norm] || norm;
+      const found = cities.find(
+        (c) => c.slug === target || c.nameFr.toLowerCase().includes(target),
+      );
+      if (found) detectedCitySlug = found.slug;
+    }
+  } catch {}
+
+  // Prioritize detected city on the server
+  if (detectedCitySlug) {
+    const idx = cityStats.findIndex((cs) => cs.city.slug === detectedCitySlug);
+    if (idx > 0) {
+      const [matched] = cityStats.splice(idx, 1);
+      cityStats.unshift(matched);
+    }
+  }
 
   const faqs =
     locale === "ar"
@@ -98,10 +160,7 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
         </section>
 
         <div className="mx-auto max-w-5xl space-y-12 px-4 py-12">
-          {/* Ad below search */}
-          <AdSlot locale={locale} />
-
-          {/* Popular cities */}
+          {/* Popular cities (prioritized by user location) */}
           <section>
             <div className="mb-5 flex items-end justify-between">
               <div>
@@ -112,33 +171,11 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {cityStats.map(({ city, count }) => (
-                <Link
-                  key={city.id}
-                  href={cityHref(locale, city.slug)}
-                  className="group flex items-center justify-between gap-3 rounded-card border border-border bg-surface p-4 shadow-soft transition hover:-translate-y-0.5 hover:shadow-lift"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-light text-xl text-primary-dark">
-                      <CrossIcon />
-                    </span>
-                    <div>
-                      <p className="font-extrabold text-foreground">
-                        {locale === "ar" ? city.nameAr : city.nameFr}
-                      </p>
-                      <p className="flex items-center gap-1 text-xs font-medium text-primary-dark">
-                        <ClockIcon className="text-sm" />
-                        {count > 0
-                          ? `${count} ${count > 1 ? t.pharmacies : t.pharmacy} ${t.onDutyNow}`
-                          : t.dutyUnavailableShort}
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRightIcon className="text-xl text-muted transition group-hover:translate-x-1 group-hover:text-primary rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                </Link>
-              ))}
-            </div>
+            <PopularCities
+              initialCityStats={cityStats}
+              locale={locale}
+              detectedCitySlug={detectedCitySlug}
+            />
           </section>
 
           {/* Disclaimer */}
@@ -173,6 +210,9 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
               ))}
             </div>
           </section>
+
+          {/* Ad slot placed at bottom of page so it never pushes content down on mobile */}
+          <AdSlot locale={locale} />
         </div>
       </main>
 
