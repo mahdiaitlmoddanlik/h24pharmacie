@@ -6,6 +6,7 @@ import "./globals.css";
 import type { Locale } from "@/lib/types";
 import { dir } from "@/lib/i18n";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -80,6 +81,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-bg text-foreground">
         {children}
+        <Analytics />
       </body>
     </html>
   );

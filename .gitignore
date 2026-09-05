@@ -38,3 +38,6 @@ app/next-env.d.ts
 # Vercel
 .vercel
 app/.vercel
+
+# Local media assets
+ad/
