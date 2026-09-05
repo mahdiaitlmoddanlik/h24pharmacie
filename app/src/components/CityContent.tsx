@@ -112,15 +112,27 @@ export default async function CityContent({
                   {t.lastUpdated}: {formatRelativeTime(updated, locale)}
                 </span>
               )}
-              <a
-                href={SOURCE.baseUrl}
-                target="_blank"
-                rel="noopener noreferrer nofollow"
-                className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/25 transition hover:bg-white/25"
-              >
-                <ShieldCheckIcon className="text-sm" />
-                {t.source}: {SOURCE.name}
-              </a>
+              {city.slug === "marrakech" ? (
+                <a
+                  href="https://www.syndicat-pharmaciens-marrakech.com"
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-100 ring-1 ring-emerald-400/40 transition hover:bg-emerald-400/30 hover:text-white"
+                >
+                  <ShieldCheckIcon className="text-sm text-emerald-300" />
+                  {t.source}: {locale === "ar" ? "نقابة صيادلة مراكش (رسمي)" : "Syndicat des Pharmaciens de Marrakech (Officiel)"}
+                </a>
+              ) : (
+                <a
+                  href={SOURCE.baseUrl}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/25 transition hover:bg-white/25"
+                >
+                  <ShieldCheckIcon className="text-sm" />
+                  {t.source}: {SOURCE.name}
+                </a>
+              )}
             </div>
           </div>
         </section>
@@ -145,12 +157,16 @@ export default async function CityContent({
                   {t.source}:
                 </strong>{" "}
                 <a
-                  href={SOURCE.baseUrl}
+                  href={city.slug === "marrakech" ? "https://www.syndicat-pharmaciens-marrakech.com" : SOURCE.baseUrl}
                   target="_blank"
                   rel="noopener noreferrer nofollow"
                   className="text-primary-dark underline"
                 >
-                  {SOURCE.name}
+                  {city.slug === "marrakech"
+                    ? locale === "ar"
+                      ? "نقابة صيادلة مراكش (رسمي)"
+                      : "Syndicat des Pharmaciens de Marrakech (Officiel)"
+                    : SOURCE.name}
                 </a>{" "}
                 · {t.lastUpdated}: {formatDateTime(updated, locale)}
               </p>

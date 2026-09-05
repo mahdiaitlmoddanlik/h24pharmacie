@@ -15,9 +15,10 @@
     "db:seed": "prisma db seed",
     "scrape:inspect": "tsx src/scripts/inspect-saydalia.ts",
     "scrape:saydalia": "tsx src/scripts/scrape-saydalia.ts",
+    "scrape:marrakech": "tsx src/scripts/scrape-syndicat-marrakech.ts",
     "scrape:telecontact": "tsx src/scripts/scrape-telecontact.ts",
     "scrape:update": "tsx src/scripts/update-duty-schedules.ts",
-    "scrape:refresh": "npm run scrape:telecontact -- --out tmp/telecontact-latest.json && npm run scrape:update -- --file tmp/telecontact-latest.json",
+    "scrape:refresh": "npm run scrape:marrakech -- --out tmp/syndicat-marrakech-latest.json && npm run scrape:update -- --file tmp/syndicat-marrakech-latest.json && npm run scrape:telecontact -- --out tmp/telecontact-latest.json && npm run scrape:update -- --file tmp/telecontact-latest.json",
     "icons:generate": "powershell -ExecutionPolicy Bypass -File scripts/generate-pwa-icons.ps1"
   },
   "prisma": {

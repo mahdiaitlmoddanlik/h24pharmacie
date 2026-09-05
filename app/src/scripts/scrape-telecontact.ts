@@ -111,16 +111,18 @@ async function scrapeCity(city: City): Promise<TelecontactCitySnapshot> {
     ),
   };
 }
-
 async function main() {
   const selectedCitySlug = argValue("--city");
+  const includeAllCities = process.argv.includes("--all-cities");
   const outPath = resolve(argValue("--out") ?? "tmp/telecontact-latest.json");
   const selectedCities = selectedCitySlug
     ? cities.filter((city) => city.slug === selectedCitySlug)
-    : cities;
+    : includeAllCities
+      ? cities
+      : cities.filter((city) => city.slug !== "marrakech");
 
   if (selectedCities.length === 0) {
-    throw new Error(`Unknown city slug: ${selectedCitySlug}`);
+    throw new Error(`No matching cities to scrape.`);
   }
 
   const scrapedAt = new Date().toISOString();

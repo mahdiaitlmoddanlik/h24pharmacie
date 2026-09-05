@@ -11,17 +11,29 @@ import {
   TELECONTACT_SOURCE_URL,
   filterTelecontactRecordsForCity,
   slugify,
-  type TelecontactSnapshot,
+  type TelecontactDutyRecord,
 } from "./parse-telecontact";
+import { SYNDICAT_MARRAKECH_SOURCE } from "./parse-syndicat-marrakech";
 
 config({ path: ".env.local" });
 config();
 
-const SOURCE = {
-  id: "telecontact",
-  name: "Telecontact.ma",
-  baseUrl: TELECONTACT_SOURCE_URL,
-  type: "website" as const,
+const KNOWN_SOURCES: Record<
+  string,
+  {
+    id: string;
+    name: string;
+    baseUrl: string;
+    type: "website" | "official";
+  }
+> = {
+  telecontact: {
+    id: "telecontact",
+    name: "Telecontact.ma",
+    baseUrl: TELECONTACT_SOURCE_URL,
+    type: "website",
+  },
+  "syndicat-marrakech": SYNDICAT_MARRAKECH_SOURCE,
 };
 
 function argValue(name: string) {
@@ -44,6 +56,32 @@ function normalizeConnectionString(url?: string): string | undefined {
   return url;
 }
 
+interface GenericRecord {
+  sourceExternalId: string;
+  name: string;
+  slug?: string;
+  address: string;
+  phone: string;
+  latitude: number;
+  longitude: number;
+  period: string;
+  dutyLabel?: string;
+  sourceUrl?: string;
+  neighborhood?: string;
+  confidenceScore?: number;
+}
+
+interface GenericSnapshot {
+  source: string;
+  scrapedAt: string;
+  dutyDate: string;
+  cities: Array<{
+    citySlug: string;
+    cityName: string;
+    records: GenericRecord[];
+  }>;
+}
+
 async function main() {
   const rawConnectionString =
     (process.env.DIRECT_URL && process.env.DIRECT_URL.trim()) ||
@@ -55,9 +93,13 @@ async function main() {
   const connectionString = normalizeConnectionString(rawConnectionString);
 
   const filePath = resolve(argValue("--file") ?? "tmp/telecontact-latest.json");
-  const snapshot = JSON.parse(await readFile(filePath, "utf8")) as TelecontactSnapshot;
-  if (snapshot.source !== SOURCE.id) {
-    throw new Error(`Snapshot source ${snapshot.source} does not match importer source ${SOURCE.id}.`);
+  const snapshot = JSON.parse(await readFile(filePath, "utf8")) as GenericSnapshot;
+
+  const sourceConfig = KNOWN_SOURCES[snapshot.source];
+  if (!sourceConfig) {
+    throw new Error(
+      `Snapshot source "${snapshot.source}" is not supported. Known sources: ${Object.keys(KNOWN_SOURCES).join(", ")}`,
+    );
   }
   const today = moroccoDateISO();
   if (snapshot.dutyDate !== today) {
@@ -78,22 +120,25 @@ async function main() {
   const dutyDate = dateFromISO(snapshot.dutyDate);
 
   await prisma.source.upsert({
-    where: { id: SOURCE.id },
+    where: { id: sourceConfig.id },
     update: {
-      name: SOURCE.name,
-      baseUrl: SOURCE.baseUrl,
-      type: SOURCE.type,
+      name: sourceConfig.name,
+      baseUrl: sourceConfig.baseUrl,
+      type: sourceConfig.type,
       lastCheckedAt: new Date(snapshot.scrapedAt),
     },
     create: {
-      ...SOURCE,
+      id: sourceConfig.id,
+      name: sourceConfig.name,
+      baseUrl: sourceConfig.baseUrl,
+      type: sourceConfig.type,
       lastCheckedAt: new Date(snapshot.scrapedAt),
     },
   });
 
   const scrapeRun = await prisma.scrapeRun.create({
     data: {
-      sourceId: SOURCE.id,
+      sourceId: sourceConfig.id,
       status: "success",
       rawSnapshotPath: filePath,
     },
@@ -138,7 +183,11 @@ async function main() {
         });
 
         const ids: string[] = [];
-        const cityRecords = filterTelecontactRecordsForCity(citySnapshot.records, seedCity);
+        const cityRecords =
+          snapshot.source === "telecontact"
+            ? filterTelecontactRecordsForCity(citySnapshot.records as unknown as TelecontactDutyRecord[], seedCity)
+            : citySnapshot.records;
+
         if (cityRecords.length === 0) {
           throw new Error(`Snapshot has no local records for ${seedCity.slug}.`);
         }
@@ -151,7 +200,7 @@ async function main() {
           });
           const slug =
             !slugOwner ||
-            (slugOwner.sourceId === SOURCE.id &&
+            (slugOwner.sourceId === sourceConfig.id &&
               slugOwner.sourceExternalId === record.sourceExternalId)
               ? baseSlug
               : `${baseSlug}-${record.sourceExternalId}`;
@@ -159,7 +208,7 @@ async function main() {
           const pharmacy = await tx.pharmacy.upsert({
             where: {
               sourceId_sourceExternalId: {
-                sourceId: SOURCE.id,
+                sourceId: sourceConfig.id,
                 sourceExternalId: record.sourceExternalId,
               },
             },
@@ -186,7 +235,7 @@ async function main() {
               latitude: record.latitude,
               longitude: record.longitude,
               verificationStatus: "source_verified",
-              sourceId: SOURCE.id,
+              sourceId: sourceConfig.id,
               sourceExternalId: record.sourceExternalId,
             },
           });
@@ -201,33 +250,46 @@ async function main() {
             },
             update: {
               cityId: seedCity.id,
-              sourceId: SOURCE.id,
+              sourceId: sourceConfig.id,
               sourceUrl: record.sourceUrl,
               scrapedAt: new Date(snapshot.scrapedAt),
-              confidenceScore: record.confidenceScore,
+              confidenceScore: record.confidenceScore ?? 1,
             },
             create: {
               pharmacyId: pharmacy.id,
               cityId: seedCity.id,
               dutyDate,
               period: prismaPeriod(record.period),
-              sourceId: SOURCE.id,
+              sourceId: sourceConfig.id,
               sourceUrl: record.sourceUrl,
               scrapedAt: new Date(snapshot.scrapedAt),
-              confidenceScore: record.confidenceScore,
+              confidenceScore: record.confidenceScore ?? 1,
             },
           });
           ids.push(schedule.id);
         }
 
+        // Clean up duty schedules from this source that are no longer active today
         await tx.dutySchedule.deleteMany({
           where: {
             cityId: seedCity.id,
             dutyDate,
-            sourceId: SOURCE.id,
+            sourceId: sourceConfig.id,
             id: { notIn: ids },
           },
         });
+
+        // When official syndicate schedules are imported, purge any unofficial schedules for this city/date
+        if (sourceConfig.type === "official") {
+          await tx.dutySchedule.deleteMany({
+            where: {
+              cityId: seedCity.id,
+              dutyDate,
+              sourceId: { not: sourceConfig.id },
+            },
+          });
+        }
+
         return ids;
       }, { maxWait: 10_000, timeout: 120_000 });
 
@@ -243,7 +305,7 @@ async function main() {
 
     const stalePharmacies = await prisma.pharmacy.findMany({
       where: {
-        sourceId: SOURCE.id,
+        sourceId: sourceConfig.id,
         verificationStatus: "source_verified",
         dutySchedules: { none: { dutyDate } },
         reports: { none: {} },

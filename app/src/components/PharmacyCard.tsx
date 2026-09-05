@@ -42,6 +42,10 @@ export default function PharmacyCard({
   const address =
     locale === "ar" && pharmacy.addressAr ? pharmacy.addressAr : pharmacy.address;
 
+  const isMarrakechSyndicat = pharmacy.sourceUrl?.includes(
+    "syndicat-pharmaciens-marrakech",
+  );
+
   return (
     <article className="group rounded-card border border-border bg-surface p-4 shadow-soft transition hover:shadow-lift sm:p-5">
       <div className="flex items-start justify-between gap-3">
@@ -58,9 +62,21 @@ export default function PharmacyCard({
               </span>
             )}
             {verified && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-primary-dark">
-                <ShieldCheckIcon className="text-sm" />
-                {t.verification[pharmacy.verificationStatus]}
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                  isMarrakechSyndicat
+                    ? "bg-emerald-100 text-emerald-900 ring-1 ring-emerald-600/20"
+                    : "bg-emerald-50 text-primary-dark"
+                }`}
+              >
+                <ShieldCheckIcon
+                  className={`text-sm ${isMarrakechSyndicat ? "text-emerald-600" : ""}`}
+                />
+                {isMarrakechSyndicat
+                  ? locale === "ar"
+                    ? "رسمي (نقابة مراكش)"
+                    : "Officiel (Syndicat)"
+                  : t.verification[pharmacy.verificationStatus]}
               </span>
             )}
           </div>
