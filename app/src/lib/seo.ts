@@ -3,11 +3,21 @@ import type { City, DutyPharmacy, Locale } from "@/lib/types";
 import { cityHref } from "@/lib/i18n";
 
 export const SITE_NAME = "H24 Pharmacie";
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.h24pharmacie.com";
+export const PRODUCTION_DOMAIN = "https://www.h24pharmacie.com";
+
+function resolveSiteUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (envUrl && (envUrl.includes("localhost") || envUrl.includes("127.0.0.1"))) {
+    return envUrl;
+  }
+  return PRODUCTION_DOMAIN;
+}
+
+export const SITE_URL = resolveSiteUrl();
 
 export function absoluteUrl(path: string): string {
-  return `${SITE_URL}${path}`;
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return `${SITE_URL}${normalized}`;
 }
 
 export function cityMetadata(city: City, locale: Locale): Metadata {

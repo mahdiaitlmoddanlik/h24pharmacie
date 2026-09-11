@@ -31,7 +31,13 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: absoluteUrl(pharmacyHref("fr", citySlug, slug)) },
+    alternates: {
+      canonical: absoluteUrl(pharmacyHref("fr", citySlug, slug)),
+      languages: {
+        fr: absoluteUrl(pharmacyHref("fr", citySlug, slug)),
+        ar: absoluteUrl(pharmacyHref("ar", citySlug, slug)),
+      },
+    },
   };
 }
 

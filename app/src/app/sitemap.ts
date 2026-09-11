@@ -31,6 +31,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.3,
     },
+    {
+      url: absoluteUrl("/contact"),
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
+      alternates: {
+        languages: {
+          fr: absoluteUrl("/contact"),
+          ar: absoluteUrl("/ar/contact"),
+        },
+      },
+    },
+    {
+      url: absoluteUrl("/ar/contact"),
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
   ];
 
   for (const c of cities) {
