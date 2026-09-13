@@ -3,10 +3,12 @@ import { Pool } from "pg";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-config({ path: ".env.local" });
-config();
+if (process.env.DATABASE_URL !== "") {
+  config({ path: ".env.local" });
+  config();
+}
 
-const rawConnectionString = process.env.DATABASE_URL;
+const rawConnectionString = process.env.DATABASE_URL || undefined;
 
 function normalizeConnectionString(url?: string): string | undefined {
   if (!url) return undefined;
