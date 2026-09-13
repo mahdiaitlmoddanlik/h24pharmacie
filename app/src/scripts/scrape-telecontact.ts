@@ -132,13 +132,6 @@ async function fetchZonePeriod(
   throw lastError;
 }
 
-  return parseTelecontactItems(data as TelecontactApiItem[], {
-    cityName: city.nameFr,
-    sourceUrl: zone.sourceUrl,
-    zoneName: zone.zoneName,
-  });
-}
-
 async function scrapeCity(city: City): Promise<TelecontactCitySnapshot> {
   const zones = await fetchZones(city);
   const records = [];

@@ -49,15 +49,13 @@ export interface SyndicatSnapshot {
   sourceUrl: string;
   scrapedAt: string;
   dutyDate: string;
-  cities: [
-    {
-      citySlug: "marrakech";
-      cityName: "Marrakech";
-      latitude: number;
-      longitude: number;
-      records: SyndicatDutyRecord[];
-    },
-  ];
+  cities: Array<{
+    citySlug: "marrakech";
+    cityName: "Marrakech";
+    latitude: number;
+    longitude: number;
+    records: SyndicatDutyRecord[];
+  }>;
 }
 
 export function slugify(input: string): string {

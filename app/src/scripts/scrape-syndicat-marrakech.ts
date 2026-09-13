@@ -228,7 +228,15 @@ async function main() {
         sourceUrl: SYNDICAT_MARRAKECH_SOURCE.baseUrl,
         scrapedAt: new Date().toISOString(),
         dutyDate: moroccoDateISO(),
-        cities: [],
+        cities: [
+          {
+            citySlug: "marrakech",
+            cityName: "Marrakech",
+            latitude: MARRAKECH_DEFAULT_LAT,
+            longitude: MARRAKECH_DEFAULT_LNG,
+            records: [],
+          },
+        ],
       };
       await mkdir(dirname(outputPath), { recursive: true });
       await writeFile(outputPath, JSON.stringify(fallbackSnapshot, null, 2), "utf8");
