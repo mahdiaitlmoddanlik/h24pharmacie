@@ -107,6 +107,12 @@ async function main() {
       `Snapshot duty date ${snapshot.dutyDate} does not match Morocco today ${today}.`,
     );
   }
+  if (snapshot.cities.length === 0) {
+    console.warn(
+      `[SKIP] Snapshot from ${snapshot.source} contains 0 cities (external provider outage). Preserving active duty schedules without error.`,
+    );
+    return;
+  }
   if (snapshot.cities.some((city) => city.records.length === 0)) {
     throw new Error("Snapshot has an empty city result; refusing to replace live duty schedules.");
   }

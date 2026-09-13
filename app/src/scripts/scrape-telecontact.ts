@@ -30,17 +30,40 @@ function sleep(ms: number) {
   return new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
 }
 
-async function fetchText(url: string) {
-  const response = await fetch(url, {
-    headers: {
-      accept: "text/html,application/xhtml+xml",
-      "user-agent": TELECONTACT_USER_AGENT,
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`Telecontact page ${response.status} for ${url}`);
+async function fetchText(url: string, retries = 3, delayMs = 2000): Promise<string> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          accept: "text/html,application/xhtml+xml",
+          "user-agent": TELECONTACT_USER_AGENT,
+        },
+        signal: AbortSignal.timeout(25000),
+      });
+
+      if (response.ok) {
+        return await response.text();
+      }
+
+      if (response.status >= 500 || response.status === 429) {
+        console.warn(
+          `  [Attempt ${attempt}/${retries}] Telecontact returned HTTP ${response.status} for ${url}. Retrying...`,
+        );
+        lastError = new Error(`Telecontact page ${response.status} for ${url}`);
+      } else {
+        throw new Error(`Telecontact page ${response.status} for ${url}`);
+      }
+    } catch (err) {
+      lastError = err;
+    }
+
+    if (attempt < retries) {
+      await sleep(delayMs * attempt);
+    }
   }
-  return response.text();
+
+  throw lastError;
 }
 
 async function fetchZones(city: City): Promise<TelecontactZone[]> {
@@ -57,26 +80,57 @@ async function fetchZonePeriod(
   city: City,
   zone: TelecontactZone,
   jour: (typeof TELECONTACT_PERIODS)[number],
+  retries = 3,
+  delayMs = 2000,
 ) {
   const url = telecontactApiUrl(city.slug, zone.zoneSlug, jour);
 
-  const response = await fetch(url, {
-    headers: {
-      accept: "application/json",
-      "user-agent": TELECONTACT_USER_AGENT,
-      "x-requested-with": "XMLHttpRequest",
-    },
-  });
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          accept: "application/json",
+          "user-agent": TELECONTACT_USER_AGENT,
+          "x-requested-with": "XMLHttpRequest",
+        },
+        signal: AbortSignal.timeout(25000),
+      });
 
-  if (!response.ok) {
-    throw new Error(`Telecontact API ${response.status} for ${city.slug}/${zone.zoneSlug}/${jour}`);
+      if (response.ok) {
+        const json = (await response.json()) as unknown;
+        const data = typeof json === "object" && json && "data" in json ? json.data : undefined;
+        if (!Array.isArray(data)) {
+          throw new Error(`Telecontact API returned non-array data for ${city.slug}/${zone.zoneSlug}`);
+        }
+
+        return parseTelecontactItems(data as TelecontactApiItem[], {
+          cityName: city.nameFr,
+          sourceUrl: zone.sourceUrl,
+          zoneName: zone.zoneName,
+        });
+      }
+
+      if (response.status >= 500 || response.status === 429) {
+        lastError = new Error(
+          `Telecontact API ${response.status} for ${city.slug}/${zone.zoneSlug}/${jour}`,
+        );
+      } else {
+        throw new Error(
+          `Telecontact API ${response.status} for ${city.slug}/${zone.zoneSlug}/${jour}`,
+        );
+      }
+    } catch (err) {
+      lastError = err;
+    }
+
+    if (attempt < retries) {
+      await sleep(delayMs * attempt);
+    }
   }
 
-  const json = (await response.json()) as unknown;
-  const data = typeof json === "object" && json && "data" in json ? json.data : undefined;
-  if (!Array.isArray(data)) {
-    throw new Error(`Telecontact API returned non-array data for ${city.slug}/${zone.zoneSlug}`);
-  }
+  throw lastError;
+}
 
   return parseTelecontactItems(data as TelecontactApiItem[], {
     cityName: city.nameFr,

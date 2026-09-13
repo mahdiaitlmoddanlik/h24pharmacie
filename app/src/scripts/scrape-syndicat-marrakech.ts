@@ -26,28 +26,60 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-async function fetchHtml(url: string): Promise<string> {
-  const response = await fetch(url, {
-    headers: {
-      accept: "text/html,application/xhtml+xml",
-      "user-agent": SYNDICAT_USER_AGENT,
-    },
-  });
+async function fetchHtml(url: string, retries = 3, delayMs = 3000): Promise<string> {
+  let lastError: unknown;
 
-  if (!response.ok) {
-    throw new Error(`Syndicat HTTP ${response.status} for ${url}`);
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          accept: "text/html,application/xhtml+xml",
+          "user-agent": SYNDICAT_USER_AGENT,
+        },
+        signal: AbortSignal.timeout(25000),
+      });
+
+      if (response.ok) {
+        return await response.text();
+      }
+
+      if (response.status >= 500 || response.status === 429) {
+        console.warn(
+          `  [Attempt ${attempt}/${retries}] Syndicat returned HTTP ${response.status} for ${url}. Retrying in ${delayMs * attempt}ms...`,
+        );
+        lastError = new Error(`Syndicat HTTP ${response.status} for ${url}`);
+      } else {
+        throw new Error(`Syndicat HTTP ${response.status} for ${url}`);
+      }
+    } catch (err) {
+      lastError = err;
+      if (attempt < retries) {
+        console.warn(
+          `  [Attempt ${attempt}/${retries}] Failed fetching ${url} (${err instanceof Error ? err.message : String(err)}). Retrying in ${delayMs * attempt}ms...`,
+        );
+      }
+    }
+
+    if (attempt < retries) {
+      await sleep(delayMs * attempt);
+    }
   }
 
-  return response.text();
+  throw lastError;
 }
 
 async function scrapeMarrakech(): Promise<SyndicatDutyRecord[]> {
-  console.log("Fetching Marrakech duty districts from Syndicat...");
+  console.log("Fetching Marrakech duty districts from Syndicat (day)...");
+  const dayIndexHtml = await fetchHtml(
+    `${SYNDICAT_MARRAKECH_SOURCE.baseUrl}/pharmacies-de-garde-marrakech`,
+  );
 
-  const [dayIndexHtml, nightIndexHtml] = await Promise.all([
-    fetchHtml(`${SYNDICAT_MARRAKECH_SOURCE.baseUrl}/pharmacies-de-garde-marrakech`),
-    fetchHtml(`${SYNDICAT_MARRAKECH_SOURCE.baseUrl}/pharmacies-de-garde-marrakech-nuit`),
-  ]);
+  await sleep(1000);
+
+  console.log("Fetching Marrakech duty districts from Syndicat (night)...");
+  const nightIndexHtml = await fetchHtml(
+    `${SYNDICAT_MARRAKECH_SOURCE.baseUrl}/pharmacies-de-garde-marrakech-nuit`,
+  );
 
   const dayDistricts = extractDistrictsFromIndex(dayIndexHtml, "day");
   const nightDistricts = extractDistrictsFromIndex(nightIndexHtml, "night");
@@ -155,33 +187,56 @@ async function main() {
   const outputPath = resolve(outArg);
 
   console.log("=== Scraping Syndicat des Pharmaciens de Marrakech ===");
-  const records = await scrapeMarrakech();
 
-  const snapshot: SyndicatSnapshot = {
-    source: "syndicat-marrakech",
-    sourceUrl: SYNDICAT_MARRAKECH_SOURCE.baseUrl,
-    scrapedAt: new Date().toISOString(),
-    dutyDate: moroccoDateISO(),
-    cities: [
-      {
-        citySlug: "marrakech",
-        cityName: "Marrakech",
-        latitude: MARRAKECH_DEFAULT_LAT,
-        longitude: MARRAKECH_DEFAULT_LNG,
-        records,
-      },
-    ],
-  };
+  try {
+    const records = await scrapeMarrakech();
 
-  await mkdir(dirname(outputPath), { recursive: true });
-  await writeFile(outputPath, JSON.stringify(snapshot, null, 2), "utf8");
+    const snapshot: SyndicatSnapshot = {
+      source: "syndicat-marrakech",
+      sourceUrl: SYNDICAT_MARRAKECH_SOURCE.baseUrl,
+      scrapedAt: new Date().toISOString(),
+      dutyDate: moroccoDateISO(),
+      cities: [
+        {
+          citySlug: "marrakech",
+          cityName: "Marrakech",
+          latitude: MARRAKECH_DEFAULT_LAT,
+          longitude: MARRAKECH_DEFAULT_LNG,
+          records,
+        },
+      ],
+    };
 
-  console.log(
-    `Saved ${records.length} Marrakech duty records to ${outputPath} successfully.`,
-  );
+    await mkdir(dirname(outputPath), { recursive: true });
+    await writeFile(outputPath, JSON.stringify(snapshot, null, 2), "utf8");
+
+    console.log(
+      `Saved ${records.length} Marrakech duty records to ${outputPath} successfully.`,
+    );
+  } catch (err) {
+    console.warn(
+      `⚠️ [WARNING] Could not scrape Syndicat Marrakech (${err instanceof Error ? err.message : String(err)}).`,
+    );
+    console.warn(
+      `Preserving existing database duty records for Marrakech and continuing pipeline.`,
+    );
+
+    // Write empty fallback snapshot so downstream steps don't crash
+    try {
+      const fallbackSnapshot: SyndicatSnapshot = {
+        source: "syndicat-marrakech",
+        sourceUrl: SYNDICAT_MARRAKECH_SOURCE.baseUrl,
+        scrapedAt: new Date().toISOString(),
+        dutyDate: moroccoDateISO(),
+        cities: [],
+      };
+      await mkdir(dirname(outputPath), { recursive: true });
+      await writeFile(outputPath, JSON.stringify(fallbackSnapshot, null, 2), "utf8");
+    } catch {}
+  }
 }
 
 main().catch((err) => {
-  console.error("Scraper error:", err);
+  console.error("Scraper unexpected error:", err);
   process.exit(1);
 });
