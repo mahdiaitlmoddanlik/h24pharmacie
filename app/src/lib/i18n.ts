@@ -1,6 +1,6 @@
 import type { DutyPeriod, Locale, VerificationStatus } from "@/lib/types";
 
-export const locales: Locale[] = ["fr", "ar"];
+export const locales: Locale[] = ["fr", "ar", "en", "es"];
 export const defaultLocale: Locale = "fr";
 
 export function isRTL(locale: Locale): boolean {
@@ -11,9 +11,9 @@ export function dir(locale: Locale): "rtl" | "ltr" {
   return isRTL(locale) ? "rtl" : "ltr";
 }
 
-/** Path prefix for a locale ("" for default fr, "/ar" for arabic). */
+/** Path prefix for a locale ("" for default fr, "/ar", "/en", "/es"). */
 export function localePrefix(locale: Locale): string {
-  return locale === "ar" ? "/ar" : "";
+  return locale === "fr" ? "" : `/${locale}`;
 }
 
 export function cityHref(locale: Locale, slug: string): string {
@@ -29,7 +29,7 @@ export function pharmacyHref(
 }
 
 export function homeHref(locale: Locale): string {
-  return locale === "ar" ? "/ar" : "/";
+  return locale === "fr" ? "/" : `/${locale}`;
 }
 
 export function legalHref(locale: Locale): string {
@@ -326,7 +326,209 @@ const ar: Dict = {
   installApp: "تثبيت التطبيق",
 };
 
-const dictionaries: Record<Locale, Dict> = { fr, ar };
+const en: Dict = {
+  brand: "H24 Pharmacie",
+  tagline: "Duty Pharmacies in Morocco",
+  hero: {
+    title: "Duty Pharmacies in Morocco",
+    subtitle: "Quickly find an open pharmacy on duty near you (24/7, night & day)",
+    searchPlaceholder: "Search your city (e.g. Marrakech, Casablanca)…",
+    useLocation: "Use my location",
+    locating: "Locating…",
+    searchCta: "Search",
+  },
+  nav: { home: "Home", cities: "Cities" },
+  popularCities: "Popular Cities",
+  popularCitiesSub: "Select a city to view pharmacies on duty today",
+  nearYou: "Near you",
+  onDutyNow: "on duty today",
+  pharmacy: "pharmacy",
+  pharmacies: "pharmacies",
+  viewCity: "View",
+  periods: {
+    day: "Day",
+    night: "Night",
+    "24h": "24h/24",
+    unknown: "Unknown",
+  },
+  periodAll: "All",
+  neighborhoods: "Districts",
+  neighborhoodsAll: "All districts",
+  lastUpdated: "Last updated",
+  source: "Source",
+  call: "Call",
+  directions: "Google Maps",
+  waze: "Waze",
+  whatsapp: "WhatsApp",
+  reportIssue: "Report error",
+  distanceUnknown: "Enable location to calculate distance",
+  sortedByDistance: "Sorted by distance (closest first)",
+  clearLocation: "Clear distance sorting",
+  verification: {
+    unverified: "Unverified",
+    source_verified: "Verified",
+    user_confirmed: "Confirmed by users",
+    pharmacy_claimed: "Official pharmacy",
+  },
+  disclaimerTitle: "Important Notice",
+  disclaimer:
+    "Duty schedules are provided for informational assistance and may change. Please call the pharmacy before traveling.",
+  seoIntroTitle: (city) => `Find a duty pharmacy in ${city}`,
+  seoIntro: (city) =>
+    `View the full schedule of on-duty pharmacies open today in ${city}, day and night. For each pharmacy you will find the address, direct phone number, and GPS routes via Google Maps or Waze. Shifts change regularly: always call ahead before traveling.`,
+  cityTitle: (city) => `Duty Pharmacies in ${city} Today`,
+  noResults: "No pharmacies found",
+  noResultsSub: "No duty pharmacy matches this selection. Try another filter.",
+  dutyUnavailableTitle: "Duty schedule unavailable",
+  dutyUnavailable:
+    "The duty schedule for this city has not been verified yet today. Please check the source or call the nearest pharmacy.",
+  dutyUnavailableShort: "Updating schedule…",
+  noLastUpdated: "Unavailable",
+  notOnDuty: "This pharmacy is not confirmed to be on duty right now.",
+  relatedCities: "Other cities",
+  backHome: "Back to Home",
+  footer: {
+    about: "About",
+    aboutText:
+      "H24 Pharmacie helps you quickly find verified on-duty pharmacies open day and night (24/7) in major cities across the Kingdom of Morocco.",
+    legal: "Legal Notice",
+    privacy: "Privacy Policy",
+    terms: "Terms of Use",
+    contact: "Contact Us",
+    rights: "All rights reserved.",
+    sourcesNote:
+      "Data aggregated from official syndicates and public records. Report any discrepancy to help us improve accuracy.",
+  },
+  report: {
+    title: "Report an issue",
+    subtitle: "Help us keep duty pharmacy information 100% accurate",
+    type: "Issue type",
+    types: {
+      closed: "Pharmacy is closed",
+      wrong_phone: "Incorrect phone number",
+      wrong_address: "Incorrect address",
+      not_on_duty: "Not on duty today",
+      other: "Other issue",
+    },
+    message: "Message (optional)",
+    messagePlaceholder: "Describe the issue…",
+    submit: "Submit report",
+    submitting: "Submitting…",
+    success: "Thank you!",
+    successSub: "Your report has been recorded.",
+    error: "An error occurred. Please try again.",
+    cancel: "Cancel",
+    close: "Close",
+  },
+  ad: "Advertisement",
+  minutesAgo: (n) => `${n} min ago`,
+  hoursAgo: (n) => `${n} h ago`,
+  justNow: "Just now",
+  installApp: "Install App",
+};
+
+const es: Dict = {
+  brand: "H24 Pharmacie",
+  tagline: "Farmacias de guardia en Marruecos",
+  hero: {
+    title: "Farmacias de guardia en Marruecos",
+    subtitle: "Encuentra rápidamente una farmacia de turno abierta cerca de ti (24h, noche y día)",
+    searchPlaceholder: "Busca tu ciudad (ej. Marrakech, Casablanca)…",
+    useLocation: "Usar mi ubicación",
+    locating: "Localizando…",
+    searchCta: "Buscar",
+  },
+  nav: { home: "Inicio", cities: "Ciudades" },
+  popularCities: "Ciudades populares",
+  popularCitiesSub: "Selecciona una ciudad para ver las farmacias de guardia hoy",
+  nearYou: "Cerca de ti",
+  onDutyNow: "de guardia hoy",
+  pharmacy: "farmacia",
+  pharmacies: "farmacias",
+  viewCity: "Ver",
+  periods: {
+    day: "Día",
+    night: "Noche",
+    "24h": "24h/24",
+    unknown: "Desconocido",
+  },
+  periodAll: "Todas",
+  neighborhoods: "Barrios",
+  neighborhoodsAll: "Todos los barrios",
+  lastUpdated: "Última actualización",
+  source: "Fuente",
+  call: "Llamar",
+  directions: "Google Maps",
+  waze: "Waze",
+  whatsapp: "WhatsApp",
+  reportIssue: "Informar de un error",
+  distanceUnknown: "Activa la ubicación para calcular la distancia",
+  sortedByDistance: "Ordenado por distancia (más cercana primero)",
+  clearLocation: "Borrar orden por distancia",
+  verification: {
+    unverified: "Sin verificar",
+    source_verified: "Verificada",
+    user_confirmed: "Confirmada por usuarios",
+    pharmacy_claimed: "Farmacia oficial",
+  },
+  disclaimerTitle: "Aviso importante",
+  disclaimer:
+    "Los turnos de guardia se facilitan a título informativo y pueden cambiar. Llama siempre a la farmacia antes de desplazarte.",
+  seoIntroTitle: (city) => `Encontrar una farmacia de guardia en ${city}`,
+  seoIntro: (city) =>
+    `Consulta la lista de farmacias de guardia abiertas hoy en ${city}, de día y de noche. Para cada farmacia encontrarás la dirección exacta, teléfono directo y rutas GPS mediante Google Maps o Waze. Los turnos cambian a diario: llama antes de desplazarte.`,
+  cityTitle: (city) => `Farmacias de guardia en ${city} hoy`,
+  noResults: "No se encontraron farmacias",
+  noResultsSub: "Ninguna farmacia de turno coincide con esta selección. Prueba con otro filtro.",
+  dutyUnavailableTitle: "Turno no disponible",
+  dutyUnavailable:
+    "El horario de guardia para esta ciudad aún no ha sido confirmado hoy. Consulta la fuente oficial o llama a la farmacia.",
+  dutyUnavailableShort: "Actualizando turno…",
+  noLastUpdated: "No disponible",
+  notOnDuty: "No se ha confirmado que esta farmacia esté de guardia en este momento.",
+  relatedCities: "Otras ciudades",
+  backHome: "Volver al inicio",
+  footer: {
+    about: "Acerca de",
+    aboutText:
+      "H24 Pharmacie te ayuda a encontrar rápidamente farmacias de guardia abiertas, de noche y de día (24h/24), en las principales ciudades de Marruecos.",
+    legal: "Aviso legal",
+    privacy: "Privacidad",
+    terms: "Términos de uso",
+    contact: "Contacto",
+    rights: "Todos los derechos reservados.",
+    sourcesNote:
+      "Datos recopilados de fuentes públicas oficiales. Informa de cualquier error para ayudarnos a mantener la máxima precisión.",
+  },
+  report: {
+    title: "Informar de un error",
+    subtitle: "Ayúdanos a mantener los horarios de guardia 100% exactos",
+    type: "Tipo de problema",
+    types: {
+      closed: "La farmacia está cerrada",
+      wrong_phone: "Teléfono incorrecto",
+      wrong_address: "Dirección incorrecta",
+      not_on_duty: "No está de guardia hoy",
+      other: "Otro problema",
+    },
+    message: "Mensaje (opcional)",
+    messagePlaceholder: "Describe el problema…",
+    submit: "Enviar reporte",
+    submitting: "Enviando…",
+    success: "¡Muchas gracias!",
+    successSub: "Tu reporte ha sido registrado con éxito.",
+    error: "Ocurrió un error. Inténtalo de nuevo.",
+    cancel: "Cancelar",
+    close: "Cerrar",
+  },
+  ad: "Publicidad",
+  minutesAgo: (n) => `hace ${n} min`,
+  hoursAgo: (n) => `hace ${n} h`,
+  justNow: "Ahora mismo",
+  installApp: "Instalar aplicación",
+};
+
+const dictionaries: Record<Locale, Dict> = { fr, ar, en, es };
 
 export function getDict(locale: Locale): Dict {
   return dictionaries[locale] ?? fr;
@@ -344,7 +546,13 @@ export function formatRelativeTime(date: Date | null, locale: Locale): string {
 
 export function formatDateTime(date: Date | null, locale: Locale): string {
   if (!date) return getDict(locale).noLastUpdated;
-  return new Intl.DateTimeFormat(locale === "ar" ? "ar-MA" : "fr-MA", {
+  const localeMap: Record<Locale, string> = {
+    fr: "fr-MA",
+    ar: "ar-MA",
+    en: "en-US",
+    es: "es-ES",
+  };
+  return new Intl.DateTimeFormat(localeMap[locale] || "fr-MA", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",

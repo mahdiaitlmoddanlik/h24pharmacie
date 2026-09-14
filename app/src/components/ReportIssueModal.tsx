@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { DutyPharmacy, Locale, ReportIssueType } from "@/lib/types";
 import { getDict } from "@/lib/i18n";
 import { CheckCircleIcon, CloseIcon } from "@/components/Icons";
+import { trackEvent } from "@/lib/analytics";
 
 const ISSUE_TYPES: ReportIssueType[] = [
   "closed",
@@ -56,6 +57,12 @@ export default function ReportIssueModal({
         }),
       });
       if (!res.ok) throw new Error("failed");
+      trackEvent("Report Issue Submitted", {
+        city: cityId,
+        pharmacySlug: pharmacy.slug,
+        issueType,
+        locale,
+      });
       setState("done");
     } catch {
       setState("error");

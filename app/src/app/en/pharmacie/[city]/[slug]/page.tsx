@@ -25,7 +25,7 @@ export async function generateMetadata({
     getPharmacyBySlug(citySlug, slug),
   ]);
   if (!city || !pharmacy) return {};
-  return pharmacyMetadata(pharmacy, city, "fr");
+  return pharmacyMetadata(pharmacy, city, "en");
 }
 
 export default async function Page({
@@ -35,5 +35,5 @@ export default async function Page({
 }) {
   const { city, slug } = await params;
   if (!(await getPharmacyBySlug(city, slug))) notFound();
-  return <PharmacyContent locale="fr" citySlug={city} pharmacySlug={slug} />;
+  return <PharmacyContent locale="en" citySlug={city} pharmacySlug={slug} />;
 }

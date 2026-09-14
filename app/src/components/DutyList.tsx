@@ -13,6 +13,7 @@ import { haversineDistanceKm } from "@/lib/geo";
 import PharmacyCard from "@/components/PharmacyCard";
 import ReportIssueModal from "@/components/ReportIssueModal";
 import { CrosshairIcon } from "@/components/Icons";
+import { trackEvent } from "@/lib/analytics";
 
 type Filter = "all" | DutyPeriod;
 
@@ -182,6 +183,11 @@ export default function DutyList({
   }, [duties, filter, neighborhood, coords]);
 
   function enableLocation() {
+    trackEvent("Geolocation Used", {
+      context: "duty_list",
+      city: city.slug,
+      locale,
+    });
     if (!("geolocation" in navigator)) return;
     setLocating(true);
     navigator.geolocation.getCurrentPosition(

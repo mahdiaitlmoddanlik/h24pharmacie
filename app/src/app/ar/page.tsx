@@ -8,7 +8,12 @@ export const metadata: Metadata = {
     "اعثر بسرعة على صيدلية حراسة مفتوحة الآن بالقرب منك في المغرب (24 ساعة، ليلاً ونهاراً): العناوين الدقيقة، أرقام الهواتف، والاتجاهات المباشرة عبر خرائط Google وWaze.",
   alternates: {
     canonical: absoluteUrl("/ar"),
-    languages: { fr: absoluteUrl("/"), ar: absoluteUrl("/ar") },
+    languages: {
+      fr: absoluteUrl("/"),
+      ar: absoluteUrl("/ar"),
+      en: absoluteUrl("/en"),
+      es: absoluteUrl("/es"),
+    },
   },
   openGraph: {
     title: "H24 Pharmacie — صيدليات الحراسة بالمغرب (24/24 ليلاً ونهاراً)",

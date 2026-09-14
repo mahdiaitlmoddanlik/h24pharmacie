@@ -3,11 +3,11 @@ import MentionsLegalesContent from "@/components/MentionsLegalesContent";
 import { absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Mentions légales & Politique de confidentialité",
+  title: "Aviso Legal y Política de Privacidad — H24 Pharmacie",
   description:
-    "Mentions légales, conditions d'utilisation, avertissement médical et politique de confidentialité de la plateforme H24 Pharmacie Maroc.",
+    "Aviso legal, términos de uso, advertencia médica y política de privacidad de la plataforma H24 Pharmacie Marruecos.",
   alternates: {
-    canonical: absoluteUrl("/mentions-legales"),
+    canonical: absoluteUrl("/es/mentions-legales"),
     languages: {
       fr: absoluteUrl("/mentions-legales"),
       ar: absoluteUrl("/ar/mentions-legales"),
@@ -18,5 +18,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <MentionsLegalesContent locale="fr" />;
+  return <MentionsLegalesContent locale="es" />;
 }

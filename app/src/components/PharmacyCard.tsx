@@ -16,6 +16,7 @@ import {
   ShieldCheckIcon,
   WhatsAppIcon,
 } from "@/components/Icons";
+import { trackEvent } from "@/lib/analytics";
 
 const periodStyles: Record<string, string> = {
   day: "bg-day-light text-amber-700",
@@ -92,6 +93,14 @@ export default function PharmacyCard({
       <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
         <a
           href={buildTelUrl(pharmacy.phone)}
+          onClick={() => {
+            trackEvent("Phone Click", {
+              city: pharmacy.cityId,
+              pharmacySlug: pharmacy.slug,
+              location: "card",
+              locale,
+            });
+          }}
           className="col-span-2 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-3 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-primary-dark sm:col-span-1"
         >
           <PhoneIcon className="text-base" />
@@ -101,6 +110,15 @@ export default function PharmacyCard({
           href={buildGoogleMapsDirectionsUrl(pharmacy.latitude, pharmacy.longitude)}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => {
+            trackEvent("Map Directions Click", {
+              provider: "google_maps",
+              city: pharmacy.cityId,
+              pharmacySlug: pharmacy.slug,
+              location: "card",
+              locale,
+            });
+          }}
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-surface-muted px-3 py-3 text-sm font-semibold text-foreground transition hover:bg-slate-200"
         >
           <MapPinIcon className="text-base text-accent" />
@@ -110,9 +128,18 @@ export default function PharmacyCard({
           href={buildWazeUrl(pharmacy.latitude, pharmacy.longitude)}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => {
+            trackEvent("Map Directions Click", {
+              provider: "waze",
+              city: pharmacy.cityId,
+              pharmacySlug: pharmacy.slug,
+              location: "card",
+              locale,
+            });
+          }}
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-surface-muted px-3 py-3 text-sm font-semibold text-foreground transition hover:bg-slate-200"
         >
-          <NavigationIcon className="text-base text-sky-500" />
+          <NavigationIcon className="text-sky-500" />
           {t.waze}
         </a>
         {pharmacy.whatsapp ? (
@@ -120,9 +147,17 @@ export default function PharmacyCard({
             href={buildWhatsAppUrl(pharmacy.whatsapp)}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => {
+              trackEvent("WhatsApp Click", {
+                city: pharmacy.cityId,
+                pharmacySlug: pharmacy.slug,
+                location: "card",
+                locale,
+              });
+            }}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-surface-muted px-3 py-3 text-sm font-semibold text-foreground transition hover:bg-slate-200"
           >
-            <WhatsAppIcon className="text-base text-[#25D366]" />
+            <WhatsAppIcon className="text-[#25D366]" />
             {t.whatsapp}
           </a>
         ) : (

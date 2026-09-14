@@ -11,6 +11,8 @@ export const metadata: Metadata = {
     languages: {
       fr: absoluteUrl("/contact"),
       ar: absoluteUrl("/ar/contact"),
+      en: absoluteUrl("/en/contact"),
+      es: absoluteUrl("/es/contact"),
     },
   },
 };

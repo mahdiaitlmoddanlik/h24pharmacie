@@ -27,13 +27,14 @@ import Footer from "@/components/Footer";
 import Disclaimer from "@/components/Disclaimer";
 import PharmacyReportButton from "@/components/PharmacyReportButton";
 import {
+  PharmacyActionGrid,
+  PharmacyStickyBar,
+} from "@/components/PharmacyActions";
+import {
   ChevronRightIcon,
   ClockIcon,
   MapPinIcon,
-  NavigationIcon,
-  PhoneIcon,
   ShieldCheckIcon,
-  WhatsAppIcon,
 } from "@/components/Icons";
 
 const periodStyles: Record<string, string> = {
@@ -138,43 +139,7 @@ export default async function PharmacyContent({
             )}
 
             {/* Desktop / inline actions */}
-            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              <a
-                href={buildTelUrl(pharmacy.phone)}
-                className="col-span-2 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white transition hover:bg-primary-dark sm:col-span-1"
-              >
-                <PhoneIcon /> {t.call}
-              </a>
-              <a
-                href={buildGoogleMapsDirectionsUrl(
-                  pharmacy.latitude,
-                  pharmacy.longitude,
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-surface-muted px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-slate-200"
-              >
-                <MapPinIcon className="text-accent" /> {t.directions}
-              </a>
-              <a
-                href={buildWazeUrl(pharmacy.latitude, pharmacy.longitude)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-surface-muted px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-slate-200"
-              >
-                <NavigationIcon className="text-sky-500" /> {t.waze}
-              </a>
-              {pharmacy.whatsapp && (
-                <a
-                  href={buildWhatsAppUrl(pharmacy.whatsapp)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-surface-muted px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-slate-200"
-                >
-                  <WhatsAppIcon className="text-[#25D366]" /> {t.whatsapp}
-                </a>
-              )}
-            </div>
+            <PharmacyActionGrid pharmacy={pharmacy} locale={locale} />
           </div>
 
           {/* Map */}
@@ -199,27 +164,7 @@ export default async function PharmacyContent({
       </main>
 
       {/* Sticky mobile action bar */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 p-3 backdrop-blur sm:hidden">
-        <div className="mx-auto flex max-w-3xl gap-2">
-          <a
-            href={buildTelUrl(pharmacy.phone)}
-            className="flex flex-[2] items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white"
-          >
-            <PhoneIcon /> {t.call}
-          </a>
-          <a
-            href={buildGoogleMapsDirectionsUrl(
-              pharmacy.latitude,
-              pharmacy.longitude,
-            )}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-surface-muted px-4 py-3 text-sm font-semibold text-foreground"
-          >
-            <MapPinIcon className="text-accent" /> {t.directions}
-          </a>
-        </div>
-      </div>
+      <PharmacyStickyBar pharmacy={pharmacy} locale={locale} />
 
       <Footer locale={locale} />
 

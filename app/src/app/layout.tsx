@@ -67,11 +67,22 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+import Script from "next/script";
+
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const pathname = (await headers()).get("x-pathname") ?? "";
-  const locale: Locale = pathname.startsWith("/ar") ? "ar" : "fr";
+  let locale: Locale = "fr";
+  if (pathname === "/ar" || pathname.startsWith("/ar/")) {
+    locale = "ar";
+  } else if (pathname === "/en" || pathname.startsWith("/en/")) {
+    locale = "en";
+  } else if (pathname === "/es" || pathname.startsWith("/es/")) {
+    locale = "es";
+  }
+
+  const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
     <html
@@ -82,6 +93,24 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col bg-bg text-foreground">
         {children}
         <Analytics />
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );

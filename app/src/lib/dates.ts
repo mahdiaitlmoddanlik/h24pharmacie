@@ -20,8 +20,14 @@ export function dateFromISO(isoDate: string): Date {
   return new Date(`${isoDate}T00:00:00.000Z`);
 }
 
-export function formatMoroccoDate(locale: "fr" | "ar", date = new Date()): string {
-  return new Intl.DateTimeFormat(locale === "ar" ? "ar-MA" : "fr-MA", {
+export function formatMoroccoDate(locale: "fr" | "ar" | "en" | "es", date = new Date()): string {
+  const localeMap = {
+    ar: "ar-MA",
+    fr: "fr-MA",
+    en: "en-US",
+    es: "es-ES",
+  };
+  return new Intl.DateTimeFormat(localeMap[locale] || "fr-MA", {
     timeZone: MOROCCO_TIME_ZONE,
     weekday: "long",
     day: "numeric",

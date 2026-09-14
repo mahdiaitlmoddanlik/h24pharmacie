@@ -11,6 +11,8 @@ export const metadata: Metadata = {
     languages: {
       fr: absoluteUrl("/mentions-legales"),
       ar: absoluteUrl("/ar/mentions-legales"),
+      en: absoluteUrl("/en/mentions-legales"),
+      es: absoluteUrl("/es/mentions-legales"),
     },
   },
 };

@@ -3,11 +3,11 @@ import ContactContent from "@/components/ContactContent";
 import { absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Contactez-nous — H24 Pharmacie Maroc",
+  title: "Contacto — H24 Pharmacie Marruecos",
   description:
-    "Contactez l'équipe H24 Pharmacie Maroc : contact@h24pharmacie.com. Demandes de vérification d'officines, signalements d'erreurs et partenariats.",
+    "Contacta con el equipo de H24 Pharmacie Marruecos en contact@h24pharmacie.com. Verificación de farmacias, avisos de errores y consultas.",
   alternates: {
-    canonical: absoluteUrl("/contact"),
+    canonical: absoluteUrl("/es/contact"),
     languages: {
       fr: absoluteUrl("/contact"),
       ar: absoluteUrl("/ar/contact"),
@@ -17,6 +17,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ContactPage() {
-  return <ContactContent locale="fr" />;
+export default function ContactPageEs() {
+  return <ContactContent locale="es" />;
 }

@@ -1,3 +1,5 @@
+import type { Locale } from "@/lib/types";
+
 export interface LatLng {
   latitude: number;
   longitude: number;
@@ -43,7 +45,7 @@ export function buildWhatsAppUrl(phone: string, text?: string): string {
   return `https://wa.me/${num}${q}`;
 }
 
-export function formatDistance(km: number, locale: "fr" | "ar"): string {
+export function formatDistance(km: number, locale: Locale): string {
   if (km < 1) {
     const m = Math.round(km * 1000);
     return locale === "ar" ? `${m} م` : `${m} m`;

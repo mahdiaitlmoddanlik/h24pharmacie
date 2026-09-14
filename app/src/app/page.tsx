@@ -8,7 +8,12 @@ export const metadata: Metadata = {
     "Trouvez la pharmacie de garde ouverte aujourd'hui au Maroc (24h/24, nuit et jour) : adresses précises, téléphones directs et itinéraires GPS Google Maps / Waze.",
   alternates: {
     canonical: absoluteUrl("/"),
-    languages: { fr: absoluteUrl("/"), ar: absoluteUrl("/ar") },
+    languages: {
+      fr: absoluteUrl("/"),
+      ar: absoluteUrl("/ar"),
+      en: absoluteUrl("/en"),
+      es: absoluteUrl("/es"),
+    },
   },
   openGraph: {
     title: "H24 Pharmacie — Pharmacies de Garde au Maroc (24h/24, Nuit & Jour)",

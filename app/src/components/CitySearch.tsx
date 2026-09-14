@@ -6,6 +6,7 @@ import type { City, Locale } from "@/lib/types";
 import { cityHref, getDict } from "@/lib/i18n";
 import { haversineDistanceKm } from "@/lib/geo";
 import { CrosshairIcon, SearchIcon, ChevronRightIcon } from "@/components/Icons";
+import { trackEvent } from "@/lib/analytics";
 
 function normalize(s: string): string {
   return s
@@ -40,10 +41,19 @@ export default function CitySearch({
   }, [query, cities]);
 
   function go(city: City) {
+    trackEvent("City Search", {
+      query: query.trim() || city.slug,
+      selectedCity: city.slug,
+      locale,
+    });
     router.push(cityHref(locale, city.slug));
   }
 
   function useMyLocation() {
+    trackEvent("Geolocation Used", {
+      context: "home_search",
+      locale,
+    });
     if (!("geolocation" in navigator)) {
       setError(t.distanceUnknown);
       return;

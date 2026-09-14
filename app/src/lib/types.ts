@@ -1,4 +1,4 @@
-export type Locale = "fr" | "ar";
+export type Locale = "fr" | "ar" | "en" | "es";
 
 export type DutyPeriod = "day" | "night" | "24h" | "unknown";
 

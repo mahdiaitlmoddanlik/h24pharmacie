@@ -6,8 +6,7 @@ import {
   getPharmacyBySlug,
   getPharmacyStaticParams,
 } from "@/lib/data";
-import { absoluteUrl } from "@/lib/seo";
-import { pharmacyHref } from "@/lib/i18n";
+import { pharmacyMetadata } from "@/lib/seo";
 
 export const dynamicParams = false;
 
@@ -26,19 +25,7 @@ export async function generateMetadata({
     getPharmacyBySlug(citySlug, slug),
   ]);
   if (!city || !pharmacy) return {};
-  const title = `${pharmacy.name} — صيدلية حراسة ${city.nameAr}`;
-  const description = `${pharmacy.name}، ${pharmacy.addressAr ?? pharmacy.address}. الهاتف والاتجاهات عبر خرائط Google وWaze. صيدلية حراسة في ${city.nameAr}.`;
-  return {
-    title,
-    description,
-    alternates: {
-      canonical: absoluteUrl(pharmacyHref("ar", citySlug, slug)),
-      languages: {
-        fr: absoluteUrl(pharmacyHref("fr", citySlug, slug)),
-        ar: absoluteUrl(pharmacyHref("ar", citySlug, slug)),
-      },
-    },
-  };
+  return pharmacyMetadata(pharmacy, city, "ar");
 }
 
 export default async function Page({
