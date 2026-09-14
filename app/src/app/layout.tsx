@@ -82,7 +82,7 @@ export default async function RootLayout({
     locale = "es";
   }
 
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-178DREPD9G";
 
   return (
     <html
