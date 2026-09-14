@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getCities, getPharmacyStaticParams } from "@/lib/data";
-import { cityHref, pharmacyHref } from "@/lib/i18n";
+import { cityHref, pharmacyHref, zoneHref } from "@/lib/i18n";
+import { getAllZoneStaticParams } from "@/lib/data/neighborhoods";
 import { absoluteUrl } from "@/lib/seo";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -73,6 +74,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       { url: absoluteUrl(cityHref("ar", c.slug)), lastModified: now, changeFrequency: "daily", priority: 0.8, alternates: cityAlternates },
       { url: absoluteUrl(cityHref("en", c.slug)), lastModified: now, changeFrequency: "daily", priority: 0.8, alternates: cityAlternates },
       { url: absoluteUrl(cityHref("es", c.slug)), lastModified: now, changeFrequency: "daily", priority: 0.8, alternates: cityAlternates },
+    );
+  }
+
+  // Neighborhood / Zone duty pages (High-intent local SEO)
+  const zones = getAllZoneStaticParams();
+  for (const { city, zone } of zones) {
+    const zoneAlternates = {
+      languages: {
+        fr: absoluteUrl(zoneHref("fr", city, zone)),
+        ar: absoluteUrl(zoneHref("ar", city, zone)),
+        en: absoluteUrl(zoneHref("en", city, zone)),
+        es: absoluteUrl(zoneHref("es", city, zone)),
+      },
+    };
+
+    entries.push(
+      { url: absoluteUrl(zoneHref("fr", city, zone)), lastModified: now, changeFrequency: "daily", priority: 0.85, alternates: zoneAlternates },
+      { url: absoluteUrl(zoneHref("ar", city, zone)), lastModified: now, changeFrequency: "daily", priority: 0.85, alternates: zoneAlternates },
+      { url: absoluteUrl(zoneHref("en", city, zone)), lastModified: now, changeFrequency: "daily", priority: 0.85, alternates: zoneAlternates },
+      { url: absoluteUrl(zoneHref("es", city, zone)), lastModified: now, changeFrequency: "daily", priority: 0.85, alternates: zoneAlternates },
     );
   }
 

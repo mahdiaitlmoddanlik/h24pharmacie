@@ -25,20 +25,43 @@ function matches(p: DutyPharmacy, f: Filter): boolean {
   return p.period === f || p.period === "24h";
 }
 
+function matchesNeighborhood(
+  pharmacyNb: string | undefined,
+  selectedNb: string,
+): boolean {
+  if (!pharmacyNb) return false;
+  if (pharmacyNb === selectedNb) return true;
+  const a = pharmacyNb
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+  const b = selectedNb
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+  return a === b || a.includes(b) || b.includes(a);
+}
+
 export default function DutyList({
   city,
   duties,
   locale,
   sourceZones,
+  initialNeighborhood,
 }: {
   city: City;
   duties: DutyPharmacy[];
   locale: Locale;
   sourceZones?: SourceZone[];
+  initialNeighborhood?: string;
 }) {
   const t = getDict(locale);
   const [filter, setFilter] = useState<Filter>("all");
-  const [neighborhood, setNeighborhood] = useState<string | null>(null);
+  const [neighborhood, setNeighborhood] = useState<string | null>(
+    initialNeighborhood ?? null,
+  );
   const [reportTarget, setReportTarget] = useState<DutyPharmacy | null>(null);
   const [coords, setCoords] = useState<{ latitude: number; longitude: number } | null>(
     null,
@@ -99,13 +122,15 @@ export default function DutyList({
   useEffect(() => {
     if (neighborhood) {
       const stillHasPharmacies = duties.some(
-        (p) => matches(p, filter) && p.neighborhood === neighborhood,
+        (p) =>
+          matches(p, filter) &&
+          matchesNeighborhood(p.neighborhood, neighborhood),
       );
-      if (!stillHasPharmacies) {
+      if (!stillHasPharmacies && !initialNeighborhood) {
         setNeighborhood(null);
       }
     }
-  }, [filter, neighborhood, duties]);
+  }, [filter, neighborhood, duties, initialNeighborhood]);
 
   const activeNeighborhoods = useMemo(() => {
     const periodDuties = duties.filter((p) => matches(p, filter));
@@ -142,7 +167,9 @@ export default function DutyList({
 
   const visible = useMemo(() => {
     let list = duties.filter(
-      (p) => matches(p, filter) && (!neighborhood || p.neighborhood === neighborhood),
+      (p) =>
+        matches(p, filter) &&
+        (!neighborhood || matchesNeighborhood(p.neighborhood, neighborhood)),
     );
 
     if (coords) {

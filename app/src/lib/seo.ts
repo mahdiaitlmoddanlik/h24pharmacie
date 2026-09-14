@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { City, DutyPharmacy, Locale, Pharmacy } from "@/lib/types";
-import { cityHref, pharmacyHref } from "@/lib/i18n";
+import { cityHref, pharmacyHref, zoneHref } from "@/lib/i18n";
+import { type Zone, getZoneName } from "@/lib/data/neighborhoods";
 
 export const SITE_NAME = "H24 Pharmacie";
 export const PRODUCTION_DOMAIN = "https://www.h24pharmacie.com";
@@ -77,6 +78,124 @@ export function cityMetadata(city: City, locale: Locale): Metadata {
       description,
       images: [absoluteUrl("/og-image.png")],
     },
+  };
+}
+
+export function zoneMetadata(city: City, zone: Zone, locale: Locale): Metadata {
+  const cityName = locale === "ar" ? city.nameAr : city.nameFr;
+  const zoneName = getZoneName(zone, locale);
+
+  let title = `Pharmacie de garde ${zoneName} (${cityName}) aujourd'hui (Nuit & 24h) | ${SITE_NAME}`;
+  let description = `Trouvez la pharmacie de garde à ${zoneName} (${cityName}) ouverte aujourd'hui (nuit & 24h/24) : téléphones directs, adresses précises et itinéraires GPS Google Maps et Waze.`;
+  let ogLocale = "fr_MA";
+
+  if (locale === "ar") {
+    title = `صيدلية الحراسة ${zoneName} (${cityName}) اليوم (ليلاً ونهاراً) | ${SITE_NAME}`;
+    description = `اعثر على صيدلية الحراسة في حي ${zoneName} بمدينة ${cityName} اليوم (ليلاً و24 ساعة): أرقام الهواتف المباشرة، العناوين المحددة ومسارات GPS عبر Google Maps وWaze.`;
+    ogLocale = "ar_MA";
+  } else if (locale === "en") {
+    title = `Duty Pharmacy in ${zoneName}, ${cityName} Today (24/7 & Night) | ${SITE_NAME}`;
+    description = `Find an open duty pharmacy in ${zoneName}, ${cityName} today (night & 24/7): verified addresses, direct phone numbers, and GPS navigation with Google Maps and Waze.`;
+    ogLocale = "en_US";
+  } else if (locale === "es") {
+    title = `Farmacia de guardia en ${zoneName}, ${cityName} hoy (24h y Noche) | ${SITE_NAME}`;
+    description = `Encuentra la farmacia de guardia en ${zoneName} (${cityName}) hoy abierta (noche y 24h/24): teléfonos directos, direcciones exactas y rutas GPS con Google Maps y Waze.`;
+    ogLocale = "es_ES";
+  }
+
+  const path = zoneHref(locale, city.slug, zone.slug);
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: absoluteUrl(path),
+      languages: {
+        fr: absoluteUrl(zoneHref("fr", city.slug, zone.slug)),
+        ar: absoluteUrl(zoneHref("ar", city.slug, zone.slug)),
+        en: absoluteUrl(zoneHref("en", city.slug, zone.slug)),
+        es: absoluteUrl(zoneHref("es", city.slug, zone.slug)),
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url: absoluteUrl(path),
+      siteName: SITE_NAME,
+      locale: ogLocale,
+      type: "website",
+      images: [
+        {
+          url: absoluteUrl("/og-image.png"),
+          width: 1200,
+          height: 630,
+          alt: `${SITE_NAME} — ${zoneName} (${cityName})`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [absoluteUrl("/og-image.png")],
+    },
+  };
+}
+
+export function zoneJsonLd(
+  city: City,
+  zone: Zone,
+  locale: Locale,
+  duty: DutyPharmacy[],
+): Record<string, unknown> {
+  const cityName = locale === "ar" ? city.nameAr : city.nameFr;
+  const zoneName = getZoneName(zone, locale);
+
+  const itemName =
+    locale === "ar"
+      ? `صيدليات الحراسة في حي ${zoneName} بـ ${cityName} اليوم`
+      : locale === "en"
+      ? `Duty Pharmacies in ${zoneName}, ${cityName} Today`
+      : locale === "es"
+      ? `Farmacias de guardia en ${zoneName}, ${cityName} hoy`
+      : `Pharmacies de garde à ${zoneName} (${cityName}) aujourd'hui`;
+
+  const itemDesc =
+    locale === "ar"
+      ? `قائمة صيدليات الحراسة المفتوحة اليوم في حي ${zoneName} (${cityName}) مع أرقام الهواتف المباشرة والعناوين والخرائط.`
+      : locale === "en"
+      ? `Verified list of open duty pharmacies serving ${zoneName} in ${cityName} today with contact details and GPS navigation.`
+      : locale === "es"
+      ? `Lista verificada de farmacias de guardia abiertas hoy en ${zoneName} (${cityName}) con teléfonos, direcciones y mapas.`
+      : `Liste vérifiée des pharmacies de garde ouvertes aujourd'hui à ${zoneName} (${cityName}) avec téléphones directs, adresses et itinéraires.`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: itemName,
+    description: itemDesc,
+    itemListElement: duty.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": ["Pharmacy", "MedicalBusiness"],
+        name: p.name,
+        telephone: p.phone,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: p.address,
+          addressLocality: cityName,
+          addressCountry: "MA",
+        },
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: p.latitude,
+          longitude: p.longitude,
+        },
+        priceRange: "$$",
+        isAcceptingNewPatients: true,
+      },
+    })),
   };
 }
 

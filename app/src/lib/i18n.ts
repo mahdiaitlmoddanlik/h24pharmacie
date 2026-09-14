@@ -20,6 +20,14 @@ export function cityHref(locale: Locale, slug: string): string {
   return `${localePrefix(locale)}/pharmacie-de-garde/${slug}`;
 }
 
+export function zoneHref(
+  locale: Locale,
+  citySlug: string,
+  zoneSlug: string,
+): string {
+  return `${localePrefix(locale)}/pharmacie-de-garde/${citySlug}/${zoneSlug}`;
+}
+
 export function pharmacyHref(
   locale: Locale,
   citySlug: string,
@@ -90,6 +98,10 @@ type Dict = {
   noLastUpdated: string;
   notOnDuty: string;
   relatedCities: string;
+  neighborhoodsInCity: (city: string) => string;
+  zoneTitle: (zone: string, city: string) => string;
+  otherNeighborhoods: (city: string) => string;
+  noZoneDuties: (zone: string, city: string) => string;
   backHome: string;
   footer: {
     about: string;
@@ -184,6 +196,11 @@ const fr: Dict = {
   noLastUpdated: "Non disponible",
   notOnDuty: "Cette pharmacie n'est pas actuellement confirmée de garde.",
   relatedCities: "Autres villes",
+  neighborhoodsInCity: (city) => `Quartiers à ${city}`,
+  zoneTitle: (zone, city) => `Pharmacie de garde ${zone} (${city}) aujourd'hui`,
+  otherNeighborhoods: (city) => `Autres quartiers à ${city}`,
+  noZoneDuties: (zone, city) =>
+    `Aucune pharmacie n'est spécifiquement enregistrée de garde à ${zone} pour ce tour. Voici les pharmacies de garde ouvertes les plus proches à ${city} :`,
   backHome: "Retour à l'accueil",
   footer: {
     about: "À propos",
@@ -285,6 +302,11 @@ const ar: Dict = {
   noLastUpdated: "غير متاح",
   notOnDuty: "لم يتم تأكيد أن هذه الصيدلية في الحراسة حالياً.",
   relatedCities: "مدن أخرى",
+  neighborhoodsInCity: (city) => `أحياء ${city}`,
+  zoneTitle: (zone, city) => `صيدلية الحراسة ${zone} (${city}) اليوم`,
+  otherNeighborhoods: (city) => `أحياء أخرى في ${city}`,
+  noZoneDuties: (zone, city) =>
+    `لا توجد صيدلية محددة في جدول الحراسة بحي ${zone} لهذه الفترة. إليكم صيدليات الحراسة المفتوحة الأقرب في ${city}:`,
   backHome: "العودة إلى الرئيسية",
   footer: {
     about: "حول",
@@ -386,6 +408,11 @@ const en: Dict = {
   noLastUpdated: "Unavailable",
   notOnDuty: "This pharmacy is not confirmed to be on duty right now.",
   relatedCities: "Other cities",
+  neighborhoodsInCity: (city) => `Neighborhoods in ${city}`,
+  zoneTitle: (zone, city) => `Duty Pharmacy in ${zone}, ${city} Today`,
+  otherNeighborhoods: (city) => `Other neighborhoods in ${city}`,
+  noZoneDuties: (zone, city) =>
+    `No pharmacy is specifically scheduled on duty in ${zone} for this shift. Here are the nearest open duty pharmacies in ${city}:`,
   backHome: "Back to Home",
   footer: {
     about: "About",
@@ -487,6 +514,11 @@ const es: Dict = {
   noLastUpdated: "No disponible",
   notOnDuty: "No se ha confirmado que esta farmacia esté de guardia en este momento.",
   relatedCities: "Otras ciudades",
+  neighborhoodsInCity: (city) => `Barrios en ${city}`,
+  zoneTitle: (zone, city) => `Farmacia de guardia en ${zone} (${city}) hoy`,
+  otherNeighborhoods: (city) => `Otros barrios en ${city}`,
+  noZoneDuties: (zone, city) =>
+    `No hay farmacias asignadas específicamente a ${zone} en este turno. A continuación las farmacias de guardia abiertas más cercanas en ${city}:`,
   backHome: "Volver al inicio",
   footer: {
     about: "Acerca de",
