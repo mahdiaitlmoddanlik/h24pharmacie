@@ -6,6 +6,7 @@ import {
   buildGoogleMapsDirectionsUrl,
   buildTelUrl,
   buildWazeUrl,
+  buildWhatsAppShareUrl,
   buildWhatsAppUrl,
 } from "@/lib/geo";
 import {
@@ -75,7 +76,7 @@ export function PharmacyActionGrid({
       >
         <NavigationIcon className="text-sky-500" /> {t.waze}
       </a>
-      {pharmacy.whatsapp && (
+      {pharmacy.whatsapp ? (
         <a
           href={buildWhatsAppUrl(pharmacy.whatsapp)}
           target="_blank"
@@ -91,6 +92,24 @@ export function PharmacyActionGrid({
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-surface-muted px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-slate-200"
         >
           <WhatsAppIcon className="text-[#25D366]" /> {t.whatsapp}
+        </a>
+      ) : (
+        <a
+          href={buildWhatsAppShareUrl(pharmacy, locale)}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => {
+            trackEvent("Share Click", {
+              provider: "whatsapp",
+              city: pharmacy.cityId,
+              pharmacySlug: pharmacy.slug,
+              location: "detail_grid",
+              locale,
+            });
+          }}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-surface-muted px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-slate-200"
+        >
+          <WhatsAppIcon className="text-[#25D366]" /> {t.shareWhatsApp}
         </a>
       )}
     </div>
@@ -139,6 +158,24 @@ export function PharmacyStickyBar({
           className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-surface-muted px-4 py-3 text-sm font-semibold text-foreground"
         >
           <MapPinIcon className="text-accent" /> {t.directions}
+        </a>
+        <a
+          href={buildWhatsAppShareUrl(pharmacy, locale)}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => {
+            trackEvent("Share Click", {
+              provider: "whatsapp",
+              city: pharmacy.cityId,
+              pharmacySlug: pharmacy.slug,
+              location: "sticky_bar",
+              locale,
+            });
+          }}
+          className="flex items-center justify-center rounded-xl bg-surface-muted px-3.5 py-3 text-foreground transition hover:bg-slate-200"
+          aria-label={t.shareWhatsApp}
+        >
+          <WhatsAppIcon className="text-lg text-[#25D366]" />
         </a>
       </div>
     </div>

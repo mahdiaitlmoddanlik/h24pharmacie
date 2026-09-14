@@ -15,6 +15,7 @@ declare global {
 export type AnalyticsEventName =
   | "Phone Click"
   | "WhatsApp Click"
+  | "Share Click"
   | "Map Directions Click"
   | "City Search"
   | "Geolocation Used"

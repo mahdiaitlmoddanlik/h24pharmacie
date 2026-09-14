@@ -81,3 +81,24 @@ test("faqs provide full translations across all 4 locales (fr, ar, en, es)", () 
     assert.ok(meta.subtitle.length > 0);
   }
 });
+
+test("buildWhatsAppShareUrl builds valid WhatsApp share links with metadata", () => {
+  const { buildWhatsAppShareUrl } = require("@/lib/geo");
+  const url = buildWhatsAppShareUrl(
+    {
+      name: "Pharmacie Guéliz",
+      phone: "0524430101",
+      address: "Av. Mohammed V",
+      slug: "pharmacie-gueliz",
+      cityId: "marrakech",
+    },
+    "fr",
+  );
+
+  assert.ok(url.startsWith("https://api.whatsapp.com/send?text="));
+  const decoded = decodeURIComponent(url);
+  assert.ok(decoded.includes("Pharmacie Guéliz"));
+  assert.ok(decoded.includes("0524430101"));
+  assert.ok(decoded.includes("Av. Mohammed V"));
+  assert.ok(decoded.includes("utm_source=whatsapp"));
+});

@@ -5,6 +5,7 @@ import {
   buildGoogleMapsDirectionsUrl,
   buildTelUrl,
   buildWazeUrl,
+  buildWhatsAppShareUrl,
   buildWhatsAppUrl,
   formatDistance,
 } from "@/lib/geo";
@@ -161,7 +162,24 @@ export default function PharmacyCard({
             {t.whatsapp}
           </a>
         ) : (
-          <span className="hidden sm:block" />
+          <a
+            href={buildWhatsAppShareUrl(pharmacy, locale)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              trackEvent("Share Click", {
+                provider: "whatsapp",
+                city: pharmacy.cityId,
+                pharmacySlug: pharmacy.slug,
+                location: "card",
+                locale,
+              });
+            }}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-surface-muted px-3 py-3 text-sm font-semibold text-foreground transition hover:bg-slate-200"
+          >
+            <WhatsAppIcon className="text-[#25D366]" />
+            {t.shareWhatsApp}
+          </a>
         )}
       </div>
 

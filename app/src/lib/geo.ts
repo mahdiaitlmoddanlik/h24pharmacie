@@ -1,4 +1,6 @@
 import type { Locale } from "@/lib/types";
+import { pharmacyHref } from "@/lib/i18n";
+import { PRODUCTION_DOMAIN } from "@/lib/seo";
 
 export interface LatLng {
   latitude: number;
@@ -43,6 +45,44 @@ export function buildWhatsAppUrl(phone: string, text?: string): string {
   const num = phone.replace(/[^\d]/g, "");
   const q = text ? `?text=${encodeURIComponent(text)}` : "";
   return `https://wa.me/${num}${q}`;
+}
+
+export function buildWhatsAppShareUrl(
+  pharmacy: {
+    name: string;
+    phone?: string | null;
+    address?: string | null;
+    slug: string;
+    cityId: string;
+  },
+  locale: Locale,
+): string {
+  const url = `${PRODUCTION_DOMAIN}${pharmacyHref(locale, pharmacy.cityId, pharmacy.slug)}?utm_source=whatsapp&utm_medium=share`;
+
+  let text = "";
+  if (locale === "ar") {
+    text = `💊 صيدلية الحراسة: ${pharmacy.name}\n`;
+    if (pharmacy.phone) text += `📞 الهاتف: ${pharmacy.phone}\n`;
+    if (pharmacy.address) text += `📍 العنوان: ${pharmacy.address}\n`;
+    text += `🗺️ الرابط ومسار GPS: ${url}`;
+  } else if (locale === "en") {
+    text = `💊 Duty Pharmacy: ${pharmacy.name}\n`;
+    if (pharmacy.phone) text += `📞 Phone: ${pharmacy.phone}\n`;
+    if (pharmacy.address) text += `📍 Address: ${pharmacy.address}\n`;
+    text += `🗺️ Map & GPS route: ${url}`;
+  } else if (locale === "es") {
+    text = `💊 Farmacia de guardia: ${pharmacy.name}\n`;
+    if (pharmacy.phone) text += `📞 Teléfono: ${pharmacy.phone}\n`;
+    if (pharmacy.address) text += `📍 Dirección: ${pharmacy.address}\n`;
+    text += `🗺️ Ruta GPS y detalles: ${url}`;
+  } else {
+    text = `💊 Pharmacie de garde : ${pharmacy.name}\n`;
+    if (pharmacy.phone) text += `📞 Tél : ${pharmacy.phone}\n`;
+    if (pharmacy.address) text += `📍 Adresse : ${pharmacy.address}\n`;
+    text += `🗺️ Itinéraire GPS & détails : ${url}`;
+  }
+
+  return `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
 }
 
 export function formatDistance(km: number, locale: Locale): string {

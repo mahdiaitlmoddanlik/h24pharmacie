@@ -80,6 +80,7 @@ type Dict = {
   directions: string;
   waze: string;
   whatsapp: string;
+  shareWhatsApp: string;
   reportIssue: string;
   distanceUnknown: string;
   sortedByDistance: string;
@@ -169,6 +170,7 @@ const fr: Dict = {
   directions: "Google Maps",
   waze: "Waze",
   whatsapp: "WhatsApp",
+  shareWhatsApp: "Partager",
   reportIssue: "Signaler une erreur",
   distanceUnknown: "Activez la localisation pour voir la distance",
   sortedByDistance: "Trié par distance (la plus proche en premier)",
@@ -276,6 +278,7 @@ const ar: Dict = {
   directions: "خرائط Google",
   waze: "Waze",
   whatsapp: "واتساب",
+  shareWhatsApp: "مشاركة",
   reportIssue: "الإبلاغ عن خطأ",
   distanceUnknown: "فعّل تحديد الموقع لمعرفة المسافة",
   sortedByDistance: "مرتبة حسب المسافة (الأقرب أولاً)",
@@ -382,6 +385,7 @@ const en: Dict = {
   directions: "Google Maps",
   waze: "Waze",
   whatsapp: "WhatsApp",
+  shareWhatsApp: "Share",
   reportIssue: "Report error",
   distanceUnknown: "Enable location to calculate distance",
   sortedByDistance: "Sorted by distance (closest first)",
@@ -488,6 +492,7 @@ const es: Dict = {
   directions: "Google Maps",
   waze: "Waze",
   whatsapp: "WhatsApp",
+  shareWhatsApp: "Compartir",
   reportIssue: "Informar de un error",
   distanceUnknown: "Activa la ubicación para calcular la distancia",
   sortedByDistance: "Ordenado por distancia (más cercana primero)",
