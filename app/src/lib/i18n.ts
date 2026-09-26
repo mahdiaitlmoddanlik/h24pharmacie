@@ -134,6 +134,19 @@ type Dict = {
   hoursAgo: (n: number) => string;
   justNow: string;
   installApp: string;
+  shareCityWhatsApp: {
+    title: (city: string) => string;
+    subtitle: string;
+    button: string;
+    copied: string;
+  };
+  pwaPrompt: {
+    title: string;
+    description: string;
+    install: string;
+    later: string;
+    iosInstructions: string;
+  };
 };
 
 const fr: Dict = {
@@ -242,6 +255,19 @@ const fr: Dict = {
   hoursAgo: (n) => `il y a ${n} h`,
   justNow: "à l'instant",
   installApp: "Installer l'application",
+  shareCityWhatsApp: {
+    title: (city) => `Partager les pharmacies de garde à ${city}`,
+    subtitle: "Envoyer la liste du jour sur WhatsApp à vos proches ou groupes",
+    button: "Partager sur WhatsApp",
+    copied: "Lien copié !",
+  },
+  pwaPrompt: {
+    title: "Installer l'application H24",
+    description: "Accès instantané aux pharmacies de garde & mode hors-ligne sans App Store.",
+    install: "Installer l'application",
+    later: "Plus tard",
+    iosInstructions: "Sur iPhone : appuyez sur le bouton Partager ⎋ puis sur « Sur l'écran d'accueil » ＋",
+  },
 };
 
 const ar: Dict = {
@@ -349,6 +375,19 @@ const ar: Dict = {
   hoursAgo: (n) => `قبل ${n} ساعة`,
   justNow: "الآن",
   installApp: "تثبيت التطبيق",
+  shareCityWhatsApp: {
+    title: (city) => `مشاركة صيدليات الحراسة في ${city}`,
+    subtitle: "أرسل قائمة الحراسة اليوم عبر واتساب للعائلة أو المجموعات",
+    button: "مشاركة عبر واتساب",
+    copied: "تم نسخ الرابط!",
+  },
+  pwaPrompt: {
+    title: "تثبيت تطبيق H24 صيدلية",
+    description: "وصول فوري لصيدليات الحراسة 24/24 وبدون إنترنت على شاشتك الرئيسية.",
+    install: "تثبيت التطبيق",
+    later: "لاحقاً",
+    iosInstructions: "على iPhone: اضغط على زر المشاركة ⎋ ثم اختر «إضافة إلى الشاشة الرئيسية» ＋",
+  },
 };
 
 const en: Dict = {
@@ -456,6 +495,19 @@ const en: Dict = {
   hoursAgo: (n) => `${n} h ago`,
   justNow: "Just now",
   installApp: "Install App",
+  shareCityWhatsApp: {
+    title: (city) => `Share duty pharmacies in ${city}`,
+    subtitle: "Send today's duty list on WhatsApp to family or group chats",
+    button: "Share on WhatsApp",
+    copied: "Link copied!",
+  },
+  pwaPrompt: {
+    title: "Install H24 Pharmacy App",
+    description: "Instant 24/7 access to duty pharmacies and offline support directly on your home screen.",
+    install: "Install App",
+    later: "Later",
+    iosInstructions: "On iPhone: tap the Share button ⎋ and choose 'Add to Home Screen' ＋",
+  },
 };
 
 const es: Dict = {
@@ -563,6 +615,19 @@ const es: Dict = {
   hoursAgo: (n) => `hace ${n} h`,
   justNow: "Ahora mismo",
   installApp: "Instalar aplicación",
+  shareCityWhatsApp: {
+    title: (city) => `Compartir farmacias de guardia en ${city}`,
+    subtitle: "Envía la lista del día por WhatsApp a familiares o grupos",
+    button: "Compartir en WhatsApp",
+    copied: "¡Enlace copiado!",
+  },
+  pwaPrompt: {
+    title: "Instalar aplicación H24 Farmacia",
+    description: "Acceso instantáneo 24/7 a farmacias de guardia y modo sin conexión en tu pantalla de inicio.",
+    install: "Instalar aplicación",
+    later: "Más tarde",
+    iosInstructions: "En iPhone: toca el botón Compartir ⎋ y selecciona 'Añadir a la pantalla de inicio' ＋",
+  },
 };
 
 const dictionaries: Record<Locale, Dict> = { fr, ar, en, es };

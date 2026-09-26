@@ -102,3 +102,63 @@ test("buildWhatsAppShareUrl builds valid WhatsApp share links with metadata", ()
   assert.ok(decoded.includes("Av. Mohammed V"));
   assert.ok(decoded.includes("utm_source=whatsapp"));
 });
+
+test("buildCityWhatsAppShareUrl formats city-wide and zone duty lists with phones and UTM tags", () => {
+  const { buildCityWhatsAppShareUrl } = require("@/lib/geo");
+  const urlFr = buildCityWhatsAppShareUrl(
+    {
+      cityName: "Casablanca",
+      citySlug: "casablanca",
+      pharmacies: [
+        { name: "Pharmacie Anfa", phone: "0522000000", period: "24h" },
+        { name: "Pharmacie Maarif", phone: "0522111111", period: "night" },
+      ],
+    },
+    "fr",
+  );
+
+  assert.ok(urlFr.startsWith("https://api.whatsapp.com/send?text="));
+  const decodedFr = decodeURIComponent(urlFr);
+  assert.ok(decodedFr.includes("Casablanca"));
+  assert.ok(decodedFr.includes("Pharmacie Anfa (24h/24) - 📞 0522000000"));
+  assert.ok(decodedFr.includes("Pharmacie Maarif (Nuit) - 📞 0522111111"));
+  assert.ok(decodedFr.includes("utm_medium=city_share"));
+
+  const urlAr = buildCityWhatsAppShareUrl(
+    {
+      cityName: "الدار البيضاء",
+      citySlug: "casablanca",
+      zoneName: "المعاريف",
+      zoneSlug: "maarif",
+      pharmacies: [
+        { name: "صيدلية المعاريف", phone: "+212522111111", period: "night" },
+      ],
+    },
+    "ar",
+  );
+  const decodedAr = decodeURIComponent(urlAr);
+  assert.ok(decodedAr.includes("الدار البيضاء (المعاريف)"));
+  assert.ok(decodedAr.includes("صيدلية المعاريف (ليلاً) - 📞 +212522111111"));
+});
+
+test("i18n dictionary includes shareCityWhatsApp and pwaPrompt across all locales", () => {
+  const { getDict } = require("@/lib/i18n");
+  const locales = ["fr", "ar", "en", "es"];
+  for (const locale of locales) {
+    const d = getDict(locale);
+    assert.ok(d.shareCityWhatsApp);
+    assert.ok(typeof d.shareCityWhatsApp.title === "function");
+    assert.ok(d.shareCityWhatsApp.title("Rabat").length > 0);
+    assert.ok(d.shareCityWhatsApp.subtitle.length > 0);
+    assert.ok(d.shareCityWhatsApp.button.length > 0);
+    assert.ok(d.shareCityWhatsApp.copied.length > 0);
+
+    assert.ok(d.pwaPrompt);
+    assert.ok(d.pwaPrompt.title.length > 0);
+    assert.ok(d.pwaPrompt.description.length > 0);
+    assert.ok(d.pwaPrompt.install.length > 0);
+    assert.ok(d.pwaPrompt.later.length > 0);
+    assert.ok(d.pwaPrompt.iosInstructions.length > 0);
+  }
+});
+

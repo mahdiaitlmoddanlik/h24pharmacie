@@ -8,6 +8,7 @@ import { dir } from "@/lib/i18n";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
 import { Analytics } from "@vercel/analytics/next";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import PwaInstallPrompt from "@/components/PwaInstallPrompt";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -94,6 +95,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col bg-bg text-foreground">
         {children}
         <ServiceWorkerRegister locale={locale} />
+        <PwaInstallPrompt locale={locale} />
         <Analytics />
         {gaId && (
           <>

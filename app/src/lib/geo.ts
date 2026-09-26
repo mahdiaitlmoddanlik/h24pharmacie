@@ -1,5 +1,5 @@
 import type { Locale } from "@/lib/types";
-import { pharmacyHref } from "@/lib/i18n";
+import { cityHref, pharmacyHref, zoneHref } from "@/lib/i18n";
 import { PRODUCTION_DOMAIN } from "@/lib/seo";
 
 export interface LatLng {
@@ -80,6 +80,106 @@ export function buildWhatsAppShareUrl(
     if (pharmacy.phone) text += `📞 Tél : ${pharmacy.phone}\n`;
     if (pharmacy.address) text += `📍 Adresse : ${pharmacy.address}\n`;
     text += `🗺️ Itinéraire GPS & détails : ${url}`;
+  }
+
+  return `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+}
+
+export function buildCityWhatsAppShareUrl(
+  params: {
+    cityName: string;
+    citySlug: string;
+    zoneName?: string;
+    zoneSlug?: string;
+    pharmacies: Array<{
+      name: string;
+      phone?: string;
+      period?: string;
+    }>;
+  },
+  locale: Locale,
+): string {
+  const { cityName, citySlug, zoneName, zoneSlug, pharmacies } = params;
+  const path = zoneSlug
+    ? zoneHref(locale, citySlug, zoneSlug)
+    : cityHref(locale, citySlug);
+  const targetUrl = `${PRODUCTION_DOMAIN}${path}?utm_source=whatsapp&utm_medium=city_share`;
+
+  const topPharmacies = pharmacies.slice(0, 5);
+  let text = "";
+
+  if (locale === "ar") {
+    const title = zoneName
+      ? `🌙 صيدليات الحراسة في ${cityName} (${zoneName}) اليوم:`
+      : `🌙 صيدليات الحراسة في ${cityName} اليوم (ليلاً ونهاراً):`;
+    text = `${title}\n\n`;
+    topPharmacies.forEach((p, i) => {
+      const periodLabel =
+        p.period === "24h"
+          ? " (24/24)"
+          : p.period === "night"
+          ? " (ليلاً)"
+          : "";
+      text += `${i + 1}. ${p.name}${periodLabel}${p.phone ? ` - 📞 ${p.phone}` : ""}\n`;
+    });
+    if (pharmacies.length > topPharmacies.length) {
+      text += `... و ${pharmacies.length - topPharmacies.length} صيدليات أخرى\n`;
+    }
+    text += `\n📍 القائمة الكاملة، العناوين ومسارات GPS:\n${targetUrl}`;
+  } else if (locale === "en") {
+    const title = zoneName
+      ? `🌙 Duty Pharmacies in ${cityName} (${zoneName}) today:`
+      : `🌙 Duty Pharmacies in ${cityName} today (Day & Night 24/7):`;
+    text = `${title}\n\n`;
+    topPharmacies.forEach((p, i) => {
+      const periodLabel =
+        p.period === "24h"
+          ? " (24/7)"
+          : p.period === "night"
+          ? " (Night)"
+          : "";
+      text += `${i + 1}. ${p.name}${periodLabel}${p.phone ? ` - 📞 ${p.phone}` : ""}\n`;
+    });
+    if (pharmacies.length > topPharmacies.length) {
+      text += `... and ${pharmacies.length - topPharmacies.length} more pharmacies\n`;
+    }
+    text += `\n📍 Full list, phone numbers & GPS navigation:\n${targetUrl}`;
+  } else if (locale === "es") {
+    const title = zoneName
+      ? `🌙 Farmacias de guardia en ${cityName} (${zoneName}) hoy:`
+      : `🌙 Farmacias de guardia en ${cityName} hoy (Día y Noche 24h):`;
+    text = `${title}\n\n`;
+    topPharmacies.forEach((p, i) => {
+      const periodLabel =
+        p.period === "24h"
+          ? " (24h)"
+          : p.period === "night"
+          ? " (Noche)"
+          : "";
+      text += `${i + 1}. ${p.name}${periodLabel}${p.phone ? ` - 📞 ${p.phone}` : ""}\n`;
+    });
+    if (pharmacies.length > topPharmacies.length) {
+      text += `... y ${pharmacies.length - topPharmacies.length} farmacias más\n`;
+    }
+    text += `\n📍 Lista completa, teléfonos y rutas GPS:\n${targetUrl}`;
+  } else {
+    const title = zoneName
+      ? `🌙 Pharmacies de garde à ${cityName} (${zoneName}) aujourd'hui :`
+      : `🌙 Pharmacies de garde à ${cityName} aujourd'hui (Nuit & Jour 24h/24) :`;
+    text = `${title}\n\n`;
+    topPharmacies.forEach((p, i) => {
+      const periodLabel =
+        p.period === "24h"
+          ? " (24h/24)"
+          : p.period === "night"
+          ? " (Nuit)"
+          : "";
+      text += `${i + 1}. ${p.name}${periodLabel}${p.phone ? ` - 📞 ${p.phone}` : ""}\n`;
+    });
+    if (pharmacies.length > topPharmacies.length) {
+      text += `... et ${pharmacies.length - topPharmacies.length} autres pharmacies\n`;
+    }
+    text += `\n📍 Liste complète, téléphones et itinéraires GPS :\n${targetUrl}`;
   }
 
   return `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;

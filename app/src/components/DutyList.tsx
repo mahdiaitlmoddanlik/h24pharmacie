@@ -12,6 +12,7 @@ import { getDict } from "@/lib/i18n";
 import { haversineDistanceKm } from "@/lib/geo";
 import PharmacyCard from "@/components/PharmacyCard";
 import ReportIssueModal from "@/components/ReportIssueModal";
+import CityWhatsAppShare from "@/components/CityWhatsAppShare";
 import { CrosshairIcon } from "@/components/Icons";
 import { trackEvent } from "@/lib/analytics";
 
@@ -370,6 +371,15 @@ export default function DutyList({
           </div>
         )}
       </div>
+
+      {/* City & Zone WhatsApp Share Card */}
+      <CityWhatsAppShare
+        cityName={locale === "ar" ? city.nameAr : city.nameFr}
+        citySlug={city.slug}
+        zoneName={neighborhood || undefined}
+        locale={locale}
+        duties={visible.length > 0 ? visible : duties}
+      />
 
       {/* 4. Pharmacy Cards List */}
       <div className="mt-4 space-y-3">
