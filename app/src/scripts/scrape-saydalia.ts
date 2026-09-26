@@ -96,13 +96,18 @@ async function scrapeCity(city: City, apiKey: string): Promise<SaydaliaCitySnaps
 
 async function main() {
   const selectedCitySlug = argValue("--city");
+  const selectedCitiesArg = argValue("--cities");
   const outPath = resolve(argValue("--out") ?? "tmp/saydalia-latest.json");
-  const selectedCities = selectedCitySlug
-    ? cities.filter((city) => city.slug === selectedCitySlug)
-    : cities;
+  let selectedCities = cities;
+  if (selectedCitySlug) {
+    selectedCities = cities.filter((city) => city.slug === selectedCitySlug);
+  } else if (selectedCitiesArg) {
+    const slugs = selectedCitiesArg.split(",").map((s) => s.trim());
+    selectedCities = cities.filter((city) => slugs.includes(city.slug));
+  }
 
   if (selectedCities.length === 0) {
-    throw new Error(`Unknown city slug: ${selectedCitySlug}`);
+    throw new Error(`No matching cities found for: ${selectedCitySlug || selectedCitiesArg}`);
   }
 
   const apiKey = await fetchApiKey();
