@@ -24,21 +24,21 @@ export function absoluteUrl(path: string): string {
 export function cityMetadata(city: City, locale: Locale): Metadata {
   const name = locale === "ar" ? city.nameAr : city.nameFr;
   
-  let title = `Pharmacie de garde ${name} aujourd'hui (Nuit & Jour) | ${SITE_NAME}`;
-  let description = `Trouvez la pharmacie de garde à ${name} aujourd'hui ouverte 24h/24 (nuit & jour) : adresses exactes, téléphones directs et itinéraires GPS Google Maps et Waze.`;
+  let title = `Pharmacie de Garde ${name} Ouverte Aujourd'hui (24h/24 & Nuit) — ${SITE_NAME}`;
+  let description = `Pharmacie de garde à ${name} aujourd'hui ouverte maintenant (24h/24, nuit & jour). Adresses vérifiées, téléphones directs et itinéraire GPS Google Maps / Waze.`;
   let ogLocale = "fr_MA";
 
   if (locale === "ar") {
-    title = `صيدلية الحراسة ${name} اليوم (ليلاً ونهاراً) | ${SITE_NAME}`;
-    description = `اعثر على صيدلية الحراسة في ${name} اليوم المفتوحة 24 ساعة (ليلاً ونهاراً): العناوين المحددة، أرقام الهواتف المباشرة، والاتجاهات عبر خرائط Google وWaze.`;
+    title = `صيدلية الحراسة ${name} مفتوحة اليوم (24 ساعة وليلاً) — ${SITE_NAME}`;
+    description = `صيدليات الحراسة في ${name} اليوم المفتوحة الآن (24 ساعة، ليلاً ونهاراً): أرقام هواتف مباشرة، عناوين دقيقة ومسار GPS عبر Google Maps وWaze.`;
     ogLocale = "ar_MA";
   } else if (locale === "en") {
-    title = `Duty Pharmacy in ${name} Today (24/7, Night & Day) | ${SITE_NAME}`;
-    description = `Find an open duty pharmacy in ${name} today open 24/7 (night & day): verified addresses, direct phone numbers, and GPS navigation via Google Maps and Waze.`;
+    title = `Pharmacy Near Me in ${name} — 24/7 Duty Pharmacy Open Now | ${SITE_NAME}`;
+    description = `Looking for a pharmacy near you in ${name}? Verified duty pharmacies open right now (24/7, night & day). Direct phone numbers & 1-tap GPS directions.`;
     ogLocale = "en_US";
   } else if (locale === "es") {
-    title = `Farmacia de guardia en ${name} hoy (24h, Noche y Día) | ${SITE_NAME}`;
-    description = `Encuentra la farmacia de guardia en ${name} hoy abierta 24h/24 (noche y día): direcciones exactas, teléfonos directos y rutas GPS Google Maps y Waze.`;
+    title = `Farmacia Abierta Cerca de Mí en ${name} — Guardia 24h y Noche | ${SITE_NAME}`;
+    description = `¿Buscas una farmacia abierta cerca de ti en ${name}? Lista de guardia verificada hoy (24h y noche): teléfonos directos y rutas GPS Google Maps y Waze.`;
     ogLocale = "es_ES";
   }
 
@@ -85,21 +85,21 @@ export function zoneMetadata(city: City, zone: Zone, locale: Locale): Metadata {
   const cityName = locale === "ar" ? city.nameAr : city.nameFr;
   const zoneName = getZoneName(zone, locale);
 
-  let title = `Pharmacie de garde ${zoneName} (${cityName}) aujourd'hui (Nuit & 24h) | ${SITE_NAME}`;
-  let description = `Trouvez la pharmacie de garde à ${zoneName} (${cityName}) ouverte aujourd'hui (nuit & 24h/24) : téléphones directs, adresses précises et itinéraires GPS Google Maps et Waze.`;
+  let title = `Pharmacie de Garde ${zoneName} (${cityName}) Ouverte Aujourd'hui (24h/24) — ${SITE_NAME}`;
+  let description = `Pharmacie de garde à ${zoneName} (${cityName}) ouverte aujourd'hui (nuit & 24h/24) : téléphones directs, adresses précises et itinéraires GPS Google Maps et Waze.`;
   let ogLocale = "fr_MA";
 
   if (locale === "ar") {
-    title = `صيدلية الحراسة ${zoneName} (${cityName}) اليوم (ليلاً ونهاراً) | ${SITE_NAME}`;
+    title = `صيدلية الحراسة حي ${zoneName} (${cityName}) مفتوحة اليوم — ${SITE_NAME}`;
     description = `اعثر على صيدلية الحراسة في حي ${zoneName} بمدينة ${cityName} اليوم (ليلاً و24 ساعة): أرقام الهواتف المباشرة، العناوين المحددة ومسارات GPS عبر Google Maps وWaze.`;
     ogLocale = "ar_MA";
   } else if (locale === "en") {
-    title = `Duty Pharmacy in ${zoneName}, ${cityName} Today (24/7 & Night) | ${SITE_NAME}`;
-    description = `Find an open duty pharmacy in ${zoneName}, ${cityName} today (night & 24/7): verified addresses, direct phone numbers, and GPS navigation with Google Maps and Waze.`;
+    title = `Duty Pharmacy in ${zoneName}, ${cityName} — Open Now (24/7) | ${SITE_NAME}`;
+    description = `Find a duty pharmacy open now in ${zoneName}, ${cityName} (night & 24/7): verified addresses, direct phone numbers, and GPS navigation with Google Maps & Waze.`;
     ogLocale = "en_US";
   } else if (locale === "es") {
-    title = `Farmacia de guardia en ${zoneName}, ${cityName} hoy (24h y Noche) | ${SITE_NAME}`;
-    description = `Encuentra la farmacia de guardia en ${zoneName} (${cityName}) hoy abierta (noche y 24h/24): teléfonos directos, direcciones exactas y rutas GPS con Google Maps y Waze.`;
+    title = `Farmacia de Guardia en ${zoneName}, ${cityName} Abierta Hoy (24h) | ${SITE_NAME}`;
+    description = `Farmacia de guardia en ${zoneName} (${cityName}) abierta hoy (noche y 24h/24): teléfonos directos, direcciones exactas y rutas GPS con Google Maps y Waze.`;
     ogLocale = "es_ES";
   }
 

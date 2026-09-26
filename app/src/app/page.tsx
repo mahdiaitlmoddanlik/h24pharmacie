@@ -3,9 +3,9 @@ import HomeContent from "@/components/HomeContent";
 import { absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "H24 Pharmacie — Pharmacies de Garde au Maroc (24h/24, Nuit & Jour)",
+  title: "Pharmacie de Garde Ouverte Aujourd'hui au Maroc (24h/24 & Nuit) — H24 Pharmacie",
   description:
-    "Trouvez la pharmacie de garde ouverte aujourd'hui au Maroc (24h/24, nuit et jour) : adresses précises, téléphones directs et itinéraires GPS Google Maps / Waze.",
+    "Trouvez la pharmacie de garde ouverte maintenant près de vous au Maroc (nuit, jour, 24h/24) : adresses précises, numéros de téléphone directs et itinéraires GPS Google Maps et Waze.",
   alternates: {
     canonical: absoluteUrl("/"),
     languages: {
@@ -16,9 +16,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "H24 Pharmacie — Pharmacies de Garde au Maroc (24h/24, Nuit & Jour)",
+    title: "Pharmacie de Garde Ouverte Aujourd'hui au Maroc (24h/24 & Nuit) — H24 Pharmacie",
     description:
-      "Trouvez rapidement une pharmacie de garde ouverte près de vous au Maroc : adresses, téléphones directs et itinéraires GPS.",
+      "Trouvez la pharmacie de garde ouverte maintenant près de vous au Maroc (nuit, jour, 24h/24) : adresses précises, numéros de téléphone directs et itinéraires GPS.",
     url: absoluteUrl("/"),
     siteName: "H24 Pharmacie",
     locale: "fr_MA",

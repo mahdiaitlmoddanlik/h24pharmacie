@@ -3,7 +3,7 @@ import HomeContent from "@/components/HomeContent";
 import { absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "H24 Pharmacie — صيدليات الحراسة بالمغرب (24/24 ليلاً ونهاراً)",
+  title: "صيدلية الحراسة مفتوحة الآن في المغرب (24/24 ليلاً ونهاراً) — H24 Pharmacie",
   description:
     "اعثر بسرعة على صيدلية حراسة مفتوحة الآن بالقرب منك في المغرب (24 ساعة، ليلاً ونهاراً): العناوين الدقيقة، أرقام الهواتف، والاتجاهات المباشرة عبر خرائط Google وWaze.",
   alternates: {
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "H24 Pharmacie — صيدليات الحراسة بالمغرب (24/24 ليلاً ونهاراً)",
+    title: "صيدلية الحراسة مفتوحة الآن في المغرب (24/24 ليلاً ونهاراً) — H24 Pharmacie",
     description:
       "اعثر بسرعة على صيدلية حراسة مفتوحة الآن بالقرب منك في المغرب (24 ساعة، ليلاً ونهاراً): العناوين الدقيقة، أرقام الهواتف، والاتجاهات المباشرة.",
     url: absoluteUrl("/ar"),
