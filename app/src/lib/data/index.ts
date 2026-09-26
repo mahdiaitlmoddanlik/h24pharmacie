@@ -10,6 +10,7 @@ import { dateFromISO, moroccoDateISO } from "@/lib/dates";
 import { prisma } from "@/lib/prisma";
 import { cities as seedCities } from "./cities";
 import { pharmacies as seedPharmacies } from "./pharmacies";
+import { seedDuties } from "./seed-duties";
 
 export const SOURCE: Source = {
   id: "telecontact",
@@ -120,8 +121,38 @@ function mapPharmacy(
   };
 }
 
+function getFallbackDutyPharmacies(
+  citySlug: string,
+  period?: DutyPeriod,
+): DutyPharmacy[] {
+  const fallbackDuties = seedDuties[citySlug];
+  if (!fallbackDuties || fallbackDuties.length === 0) return [];
+
+  const todayIso = moroccoDateISO();
+  const filtered = period
+    ? fallbackDuties.filter((d) => {
+        if (period === "24h") return d.period === "24h";
+        if (period === "day") return d.period === "day" || d.period === "24h";
+        if (period === "night") return d.period === "night" || d.period === "24h";
+        return d.period === period;
+      })
+    : fallbackDuties;
+
+  return filtered
+    .map((d) => ({
+      ...d,
+      dutyDate: todayIso,
+    }))
+    .sort(sortDutyPharmacies);
+}
+
 export async function lastUpdatedFor(citySlug: string): Promise<Date | null> {
-  if (!prisma) return null;
+  if (!prisma) {
+    if (seedDuties[citySlug]?.length) {
+      return new Date(seedDuties[citySlug][0].scrapedAt);
+    }
+    return null;
+  }
 
   try {
     const latestDuty = await prisma.dutySchedule.findFirst({
@@ -130,9 +161,20 @@ export async function lastUpdatedFor(citySlug: string): Promise<Date | null> {
       select: { scrapedAt: true },
     });
 
-    return latestDuty?.scrapedAt ?? null;
+    if (latestDuty?.scrapedAt) {
+      return latestDuty.scrapedAt;
+    }
+
+    if (seedDuties[citySlug]?.length) {
+      return new Date(seedDuties[citySlug][0].scrapedAt);
+    }
+
+    return null;
   } catch (error) {
     warnDatabaseFailure(error);
+    if (seedDuties[citySlug]?.length) {
+      return new Date(seedDuties[citySlug][0].scrapedAt);
+    }
     return null;
   }
 }
@@ -146,7 +188,18 @@ export async function getCities(): Promise<City[]> {
       orderBy: { nameFr: "asc" },
     });
 
-    return rows.length > 0 ? rows.map(mapCity) : seedCities.filter((c) => c.isActive);
+    if (rows.length === 0) {
+      return seedCities.filter((c) => c.isActive);
+    }
+
+    const dbCities = rows.map(mapCity);
+    const dbSlugs = new Set(dbCities.map((c) => c.slug));
+    const missingSeedCities = seedCities.filter(
+      (c) => c.isActive && !dbSlugs.has(c.slug),
+    );
+    return [...dbCities, ...missingSeedCities].sort((a, b) =>
+      a.nameFr.localeCompare(b.nameFr),
+    );
   } catch (error) {
     warnDatabaseFailure(error);
     return seedCities.filter((c) => c.isActive);
@@ -169,17 +222,23 @@ export async function getPharmacyBySlug(
   citySlug: string,
   pharmacySlug: string,
 ): Promise<Pharmacy | undefined> {
-  if (!prisma) {
+  const findInSeed = () => {
     const city = seedCities.find((c) => c.slug === citySlug);
     if (!city) return undefined;
     return seedPharmacies.find(
-      (p) => p.cityId === city.id && p.slug === pharmacySlug,
+      (p) =>
+        (p.cityId === city.id || p.cityId === citySlug) &&
+        p.slug === pharmacySlug,
     );
+  };
+
+  if (!prisma) {
+    return findInSeed();
   }
 
   try {
     const city = await prisma.city.findUnique({ where: { slug: citySlug } });
-    if (!city) return undefined;
+    if (!city) return findInSeed();
 
     const pharmacy = await prisma.pharmacy.findUnique({
       where: {
@@ -191,18 +250,10 @@ export async function getPharmacyBySlug(
       include: { city: true },
     });
 
-    return pharmacy
-      ? mapPharmacy(pharmacy, pharmacy.city)
-      : seedPharmacies.find(
-          (p) => p.cityId === citySlug && p.slug === pharmacySlug,
-        );
+    return pharmacy ? mapPharmacy(pharmacy, pharmacy.city) : findInSeed();
   } catch (error) {
     warnDatabaseFailure(error);
-    const city = seedCities.find((c) => c.slug === citySlug);
-    if (!city) return undefined;
-    return seedPharmacies.find(
-      (p) => p.cityId === city.id && p.slug === pharmacySlug,
-    );
+    return findInSeed();
   }
 }
 
@@ -210,7 +261,9 @@ export async function getDutyPharmacies(
   citySlug: string,
   period?: DutyPeriod,
 ): Promise<DutyPharmacy[]> {
-  if (!prisma) return [];
+  if (!prisma) {
+    return getFallbackDutyPharmacies(citySlug, period);
+  }
 
   try {
     const today = moroccoDateISO();
@@ -252,19 +305,23 @@ export async function getDutyPharmacies(
       }
     }
 
-    return schedules
-      .map((schedule) => ({
-        ...mapPharmacy(schedule.pharmacy, schedule.city),
-        period: mapDutyPeriod(schedule.period),
-        dutyDate: isoDate(schedule.dutyDate),
-        scrapedAt: schedule.scrapedAt.toISOString(),
-        confidenceScore: schedule.confidenceScore,
-        sourceUrl: schedule.sourceUrl ?? schedule.source?.baseUrl ?? SOURCE.baseUrl,
-      }))
-      .sort(sortDutyPharmacies);
+    if (schedules.length > 0) {
+      return schedules
+        .map((schedule) => ({
+          ...mapPharmacy(schedule.pharmacy, schedule.city),
+          period: mapDutyPeriod(schedule.period),
+          dutyDate: isoDate(schedule.dutyDate),
+          scrapedAt: schedule.scrapedAt.toISOString(),
+          confidenceScore: schedule.confidenceScore,
+          sourceUrl: schedule.sourceUrl ?? schedule.source?.baseUrl ?? SOURCE.baseUrl,
+        }))
+        .sort(sortDutyPharmacies);
+    }
+
+    return getFallbackDutyPharmacies(citySlug, period);
   } catch (error) {
     warnDatabaseFailure(error);
-    return [];
+    return getFallbackDutyPharmacies(citySlug, period);
   }
 }
 
@@ -286,9 +343,17 @@ export async function getPharmacyStaticParams(): Promise<
       orderBy: { name: "asc" },
     });
 
-    return rows.length > 0
-      ? rows.map((p) => ({ city: p.city.slug, slug: p.slug }))
-      : seedPharmacies.map((p) => ({ city: p.cityId, slug: p.slug }));
+    if (rows.length === 0) {
+      return seedPharmacies.map((p) => ({ city: p.cityId, slug: p.slug }));
+    }
+
+    const dbParams = rows.map((p) => ({ city: p.city.slug, slug: p.slug }));
+    const dbKeys = new Set(dbParams.map((p) => `${p.city}/${p.slug}`));
+    const missingSeedParams = seedPharmacies
+      .filter((p) => !dbKeys.has(`${p.cityId}/${p.slug}`))
+      .map((p) => ({ city: p.cityId, slug: p.slug }));
+
+    return [...dbParams, ...missingSeedParams];
   } catch (error) {
     warnDatabaseFailure(error);
     return seedPharmacies.map((p) => ({ city: p.cityId, slug: p.slug }));
