@@ -33,6 +33,12 @@ const KNOWN_SOURCES: Record<
     baseUrl: TELECONTACT_SOURCE_URL,
     type: "website",
   },
+  saydalia: {
+    id: "saydalia",
+    name: "Saydalia.ma",
+    baseUrl: "https://saydalia.ma/fr/pharmacies-de-garde/",
+    type: "website",
+  },
   "syndicat-marrakech": SYNDICAT_MARRAKECH_SOURCE,
 };
 
