@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 import type { Locale } from "@/lib/types";
 import {
   cityHref,
@@ -53,15 +53,21 @@ export default async function PharmacyContent({
   citySlug: string;
   pharmacySlug: string;
 }) {
+  const cleanCitySlug = citySlug?.trim();
+  const cleanPharmacySlug = pharmacySlug?.trim();
   const t = getDict(locale);
   const [city, pharmacy, duties, updated] = await Promise.all([
-    getCityBySlug(citySlug),
-    getPharmacyBySlug(citySlug, pharmacySlug),
-    getDutyPharmacies(citySlug),
-    lastUpdatedFor(citySlug),
+    getCityBySlug(cleanCitySlug),
+    getPharmacyBySlug(cleanCitySlug, cleanPharmacySlug),
+    getDutyPharmacies(cleanCitySlug),
+    lastUpdatedFor(cleanCitySlug),
   ]);
-  if (!city) notFound();
-  if (!pharmacy) notFound();
+  if (!city) {
+    permanentRedirect(homeHref(locale));
+  }
+  if (!pharmacy) {
+    permanentRedirect(cityHref(locale, city.slug));
+  }
 
   const duty = duties.find((item) => item.id === pharmacy.id);
   const isOnDuty = Boolean(duty);

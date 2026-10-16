@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import PharmacyContent from "@/components/PharmacyContent";
 import {
   getCityBySlug,
@@ -8,7 +7,7 @@ import {
 } from "@/lib/data";
 import { pharmacyMetadata } from "@/lib/seo";
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
   return getPharmacyStaticParams();
@@ -19,7 +18,9 @@ export async function generateMetadata({
 }: {
   params: Promise<{ city: string; slug: string }>;
 }): Promise<Metadata> {
-  const { city: citySlug, slug } = await params;
+  const { city: rawCity, slug: rawSlug } = await params;
+  const citySlug = rawCity?.trim();
+  const slug = rawSlug?.trim();
   const [city, pharmacy] = await Promise.all([
     getCityBySlug(citySlug),
     getPharmacyBySlug(citySlug, slug),
@@ -33,7 +34,9 @@ export default async function Page({
 }: {
   params: Promise<{ city: string; slug: string }>;
 }) {
-  const { city, slug } = await params;
-  if (!(await getPharmacyBySlug(city, slug))) notFound();
+  const { city: rawCity, slug: rawSlug } = await params;
+  const city = rawCity?.trim();
+  const slug = rawSlug?.trim();
   return <PharmacyContent locale="en" citySlug={city} pharmacySlug={slug} />;
 }
+

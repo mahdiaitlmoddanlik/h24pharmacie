@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import ZoneContent from "@/components/ZoneContent";
 import { getCityBySlug } from "@/lib/data";
 import { getAllZoneStaticParams, getZoneBySlug } from "@/lib/data/neighborhoods";
 import { zoneMetadata } from "@/lib/seo";
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
   return getAllZoneStaticParams();
@@ -16,7 +15,9 @@ export async function generateMetadata({
 }: {
   params: Promise<{ city: string; zone: string }>;
 }): Promise<Metadata> {
-  const { city: citySlug, zone: zoneSlug } = await params;
+  const { city: rawCity, zone: rawZone } = await params;
+  const citySlug = rawCity?.trim();
+  const zoneSlug = rawZone?.trim();
   const [city, zone] = await Promise.all([
     getCityBySlug(citySlug),
     Promise.resolve(getZoneBySlug(citySlug, zoneSlug)),
@@ -30,11 +31,9 @@ export default async function Page({
 }: {
   params: Promise<{ city: string; zone: string }>;
 }) {
-  const { city, zone } = await params;
-  const [cityData, zoneData] = await Promise.all([
-    getCityBySlug(city),
-    Promise.resolve(getZoneBySlug(city, zone)),
-  ]);
-  if (!cityData || !zoneData) notFound();
+  const { city: rawCity, zone: rawZone } = await params;
+  const city = rawCity?.trim();
+  const zone = rawZone?.trim();
   return <ZoneContent locale="es" citySlug={city} zoneSlug={zone} />;
 }
+

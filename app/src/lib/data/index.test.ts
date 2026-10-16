@@ -54,4 +54,13 @@ test("returns verified fallback duty schedules for new cities when database is u
     (globalThis as { prisma?: unknown }).prisma = globalPrisma;
   }
 });
+test("getCityBySlug and getPharmacyBySlug trim trailing and leading whitespace", async () => {
+  const { getCityBySlug, getPharmacyBySlug } = await import("./index");
+  const city = await getCityBySlug("casablanca ");
+  assert.ok(city);
+  assert.equal(city?.slug, "casablanca");
 
+  const pharmacy = await getPharmacyBySlug("casablanca ", " pharmacie-al-amal ");
+  assert.ok(pharmacy);
+  assert.equal(pharmacy?.slug, "pharmacie-al-amal");
+});

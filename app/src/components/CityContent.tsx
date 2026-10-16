@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 import type { Locale } from "@/lib/types";
 import {
   cityHref,
@@ -40,14 +40,17 @@ export default async function CityContent({
   locale: Locale;
   citySlug: string;
 }) {
+  const cleanCitySlug = citySlug?.trim();
   const t = getDict(locale);
   const [city, duties, updated, allCities] = await Promise.all([
-    getCityBySlug(citySlug),
-    getDutyPharmacies(citySlug),
-    lastUpdatedFor(citySlug),
+    getCityBySlug(cleanCitySlug),
+    getDutyPharmacies(cleanCitySlug),
+    lastUpdatedFor(cleanCitySlug),
     getCities(),
   ]);
-  if (!city) notFound();
+  if (!city) {
+    permanentRedirect(homeHref(locale));
+  }
 
   const cityName = locale === "ar" ? city.nameAr : city.nameFr;
   const related = allCities.filter((c) => c.id !== city.id);

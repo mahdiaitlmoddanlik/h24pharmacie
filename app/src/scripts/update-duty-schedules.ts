@@ -315,24 +315,10 @@ async function main() {
       throw new Error("No known cities were updated.");
     }
 
-    const stalePharmacies = await prisma.pharmacy.findMany({
-      where: {
-        sourceId: sourceConfig.id,
-        verificationStatus: "source_verified",
-        dutySchedules: { none: { dutyDate } },
-        reports: { none: {} },
-      },
-      select: { id: true },
-    });
-    if (stalePharmacies.length > 0) {
-      const stalePharmacyIds = stalePharmacies.map((pharmacy) => pharmacy.id);
-      await prisma.dutySchedule.deleteMany({
-        where: { pharmacyId: { in: stalePharmacyIds } },
-      });
-      await prisma.pharmacy.deleteMany({
-        where: { id: { in: stalePharmacyIds } },
-      });
-    }
+    // Note: Never delete pharmacies when they rotate off-duty.
+    // In Morocco duty rotations change daily/weekly; physical pharmacies still exist and are indexed by Google.
+    // Deleting them caused 110 URLs indexed in GSC to return 404 errors.
+
 
     await prisma.scrapeRun.update({
       where: { id: scrapeRun.id },

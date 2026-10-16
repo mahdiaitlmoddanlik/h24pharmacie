@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
         destination: "/:path*",
         permanent: true,
       },
+      {
+        source: "/pharmacie/:city",
+        destination: "/pharmacie-de-garde/:city",
+        permanent: true,
+      },
+      {
+        source: "/:locale(ar|en|es)/pharmacie/:city",
+        destination: "/:locale/pharmacie-de-garde/:city",
+        permanent: true,
+      },
     ];
   },
 };
