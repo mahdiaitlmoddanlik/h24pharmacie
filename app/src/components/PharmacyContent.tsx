@@ -8,6 +8,7 @@ import {
   homeHref,
   pharmacyHref,
 } from "@/lib/i18n";
+import { getDutyHoursInfo } from "@/lib/duty-hours";
 import {
   SOURCE,
   getCityBySlug,
@@ -71,6 +72,7 @@ export default async function PharmacyContent({
 
   const duty = duties.find((item) => item.id === pharmacy.id);
   const isOnDuty = Boolean(duty);
+  const dutyHours = duty ? getDutyHoursInfo(duty.period, locale) : null;
 
   const cityName = locale === "ar" ? city.nameAr : city.nameFr;
   const address =
@@ -132,12 +134,33 @@ export default async function PharmacyContent({
               <MapPinIcon className="mt-0.5 shrink-0 text-lg" />
               <span>{address}</span>
             </p>
-            {isOnDuty ? (
-              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-foreground">
-                <ClockIcon className="text-sm" />
-                {t.lastUpdated}: {formatRelativeTime(updated, locale)} · {t.source}:{" "}
-                {SOURCE.name}
-              </p>
+            {isOnDuty && duty ? (
+              <div className="mt-4 space-y-2">
+                <div className="flex flex-wrap items-center gap-2 rounded-card border border-emerald-500/20 bg-emerald-500/5 p-3">
+                  <span
+                    className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold ${
+                      dutyHours?.isOpen
+                        ? "bg-emerald-600 text-white shadow-xs"
+                        : "bg-amber-600 text-white"
+                    }`}
+                  >
+                    <span
+                      className={`h-2 w-2 rounded-full ${
+                        dutyHours?.isOpen ? "bg-white animate-pulse" : "bg-white/80"
+                      }`}
+                    />
+                    {dutyHours?.statusLabel}
+                  </span>
+                  <span className="text-xs font-semibold text-foreground">
+                    {dutyHours?.scheduleText}
+                  </span>
+                </div>
+                <p className="inline-flex items-center gap-1.5 rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-foreground">
+                  <ClockIcon className="text-sm" />
+                  {t.lastUpdated}: {formatRelativeTime(updated, locale)} · {t.source}:{" "}
+                  {SOURCE.name}
+                </p>
+              </div>
             ) : (
               <p className="mt-3 rounded-card border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900">
                 {t.notOnDuty}

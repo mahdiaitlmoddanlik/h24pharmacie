@@ -266,6 +266,48 @@ export async function getPharmacyBySlug(
   }
 }
 
+export async function getCityPharmacies(citySlug: string): Promise<Pharmacy[]> {
+  const cleanCitySlug = citySlug?.trim();
+  if (!cleanCitySlug) return [];
+
+  const getSeedPharmaciesForCity = () => {
+    const city = seedCities.find((c) => c.slug === cleanCitySlug);
+    if (!city) return [];
+    return seedPharmacies.filter(
+      (p) => p.cityId === city.id || p.cityId === cleanCitySlug,
+    );
+  };
+
+  if (!prisma) {
+    return getSeedPharmaciesForCity();
+  }
+
+  try {
+    const city = await prisma.city.findUnique({ where: { slug: cleanCitySlug } });
+    if (!city) return getSeedPharmaciesForCity();
+
+    const rows = await prisma.pharmacy.findMany({
+      where: { cityId: city.id },
+      include: { city: true },
+      orderBy: { name: "asc" },
+    });
+
+    if (rows.length === 0) {
+      return getSeedPharmaciesForCity();
+    }
+
+    const dbPharmacies = rows.map((p) => mapPharmacy(p, p.city));
+    const dbSlugs = new Set(dbPharmacies.map((p) => p.slug));
+    const missingSeed = getSeedPharmaciesForCity().filter((p) => !dbSlugs.has(p.slug));
+    return [...dbPharmacies, ...missingSeed].sort((a, b) =>
+      a.name.localeCompare(b.name, "fr"),
+    );
+  } catch (error) {
+    warnDatabaseFailure(error);
+    return getSeedPharmaciesForCity();
+  }
+}
+
 export async function getDutyPharmacies(
   citySlug: string,
   period?: DutyPeriod,

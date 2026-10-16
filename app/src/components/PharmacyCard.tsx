@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { DutyPharmacy, Locale } from "@/lib/types";
 import { getDict, pharmacyHref } from "@/lib/i18n";
+import { getDutyHoursInfo } from "@/lib/duty-hours";
 import {
   buildGoogleMapsDirectionsUrl,
   buildTelUrl,
@@ -10,6 +11,7 @@ import {
   formatDistance,
 } from "@/lib/geo";
 import {
+  ClockIcon,
   FlagIcon,
   MapPinIcon,
   NavigationIcon,
@@ -38,6 +40,7 @@ export default function PharmacyCard({
   onReport: (p: DutyPharmacy) => void;
 }) {
   const t = getDict(locale);
+  const hoursInfo = getDutyHoursInfo(pharmacy.period, locale);
   const verified =
     pharmacy.verificationStatus === "pharmacy_claimed" ||
     pharmacy.verificationStatus === "source_verified";
@@ -82,6 +85,28 @@ export default function PharmacyCard({
             <MapPinIcon className="mt-0.5 shrink-0 text-base" />
             <span>{address}</span>
           </p>
+
+          {/* Duty Hours & Live Status badge */}
+          <div className="mt-2.5 flex flex-wrap items-center gap-2">
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold ${
+                hoursInfo.isOpen
+                  ? "bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-600/20"
+                  : "bg-amber-500/10 text-amber-700 ring-1 ring-amber-600/20"
+              }`}
+            >
+              <span
+                className={`h-2 w-2 rounded-full ${
+                  hoursInfo.isOpen ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
+                }`}
+              />
+              {hoursInfo.statusLabel}
+            </span>
+            <span className="inline-flex items-center gap-1 text-xs text-muted">
+              <ClockIcon className="text-sm" />
+              <span>{hoursInfo.scheduleText}</span>
+            </span>
+          </div>
         </div>
 
         {typeof distanceKm === "number" && (

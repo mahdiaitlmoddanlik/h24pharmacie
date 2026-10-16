@@ -12,6 +12,7 @@ import {
 } from "@/lib/i18n";
 import {
   getCities,
+  getCityPharmacies,
   getCityBySlug,
   getDutyPharmacies,
   lastUpdatedFor,
@@ -49,10 +50,11 @@ export default async function ZoneContent({
   const cleanCitySlug = citySlug?.trim();
   const cleanZoneSlug = zoneSlug?.trim();
   const t = getDict(locale);
-  const [city, zone, duties, updated, allCities] = await Promise.all([
+  const [city, zone, duties, allPharmacies, updated, allCities] = await Promise.all([
     getCityBySlug(cleanCitySlug),
     Promise.resolve(getZoneBySlug(cleanCitySlug, cleanZoneSlug)),
     getDutyPharmacies(cleanCitySlug),
+    getCityPharmacies(cleanCitySlug),
     lastUpdatedFor(cleanCitySlug),
     getCities(),
   ]);
@@ -138,6 +140,7 @@ export default async function ZoneContent({
           <DutyList
             city={city}
             duties={duties}
+            allPharmacies={allPharmacies}
             locale={locale}
             sourceZones={getCityZones(city.slug)}
             initialNeighborhood={hasSpecificDuties ? zone.nameFr : undefined}

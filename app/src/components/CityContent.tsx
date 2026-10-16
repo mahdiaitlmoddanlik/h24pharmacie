@@ -13,6 +13,7 @@ import {
 import {
   SOURCE,
   getCities,
+  getCityPharmacies,
   getCityBySlug,
   getDutyPharmacies,
   lastUpdatedFor,
@@ -42,9 +43,10 @@ export default async function CityContent({
 }) {
   const cleanCitySlug = citySlug?.trim();
   const t = getDict(locale);
-  const [city, duties, updated, allCities] = await Promise.all([
+  const [city, duties, allPharmacies, updated, allCities] = await Promise.all([
     getCityBySlug(cleanCitySlug),
     getDutyPharmacies(cleanCitySlug),
+    getCityPharmacies(cleanCitySlug),
     lastUpdatedFor(cleanCitySlug),
     getCities(),
   ]);
@@ -108,6 +110,7 @@ export default async function CityContent({
           <DutyList
             city={city}
             duties={duties}
+            allPharmacies={allPharmacies}
             locale={locale}
             sourceZones={getCityZones(city.slug)}
           />

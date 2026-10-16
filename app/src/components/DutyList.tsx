@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import type {
   City,
   DutyPeriod,
   DutyPharmacy,
   Locale,
+  Pharmacy,
   SourceZone,
 } from "@/lib/types";
 import { getDict } from "@/lib/i18n";
@@ -15,6 +17,18 @@ import ReportIssueModal from "@/components/ReportIssueModal";
 import CityWhatsAppShare from "@/components/CityWhatsAppShare";
 import { CrosshairIcon } from "@/components/Icons";
 import { trackEvent } from "@/lib/analytics";
+
+const CityDutyMap = dynamic(() => import("@/components/CityDutyMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-[620px] w-full items-center justify-center rounded-2xl border border-slate-700 bg-slate-900 text-slate-400">
+      <div className="flex flex-col items-center gap-3">
+        <span className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
+        <span className="text-sm font-semibold">Chargement de la carte satellite...</span>
+      </div>
+    </div>
+  ),
+});
 
 type Filter = "all" | DutyPeriod;
 
@@ -48,17 +62,20 @@ function matchesNeighborhood(
 export default function DutyList({
   city,
   duties,
+  allPharmacies = [],
   locale,
   sourceZones,
   initialNeighborhood,
 }: {
   city: City;
   duties: DutyPharmacy[];
+  allPharmacies?: Pharmacy[];
   locale: Locale;
   sourceZones?: SourceZone[];
   initialNeighborhood?: string;
 }) {
   const t = getDict(locale);
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [filter, setFilter] = useState<Filter>("all");
   const [neighborhood, setNeighborhood] = useState<string | null>(
     initialNeighborhood ?? null,
@@ -259,8 +276,84 @@ export default function DutyList({
 
   return (
     <div>
-      {/* 1. Period Filters Bar (City-wide scope) */}
-      <div className="flex items-center justify-between gap-3">
+      {/* View Switcher: [ 📋 Liste ] vs [ 🗺️ Carte Satellite ] */}
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <div className="inline-flex rounded-2xl bg-surface p-1 border border-border shadow-soft">
+          <button
+            type="button"
+            onClick={() => setViewMode("list")}
+            className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition ${
+              viewMode === "list"
+                ? "bg-primary text-white shadow-xs"
+                : "text-muted hover:text-foreground hover:bg-surface-muted"
+            }`}
+          >
+            <span>📋</span>
+            <span>{locale === "ar" ? "قائمة" : "Liste"}</span>
+            <span
+              className={`text-xs px-1.5 py-0.2 rounded-full ${
+                viewMode === "list" ? "bg-white/20 text-white" : "bg-surface-muted text-muted"
+              }`}
+            >
+              {visible.length}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("map")}
+            className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition ${
+              viewMode === "map"
+                ? "bg-primary text-white shadow-xs"
+                : "text-muted hover:text-foreground hover:bg-surface-muted"
+            }`}
+          >
+            <span>🗺️</span>
+            <span>{locale === "ar" ? "خريطة الأقمار الصناعية" : "Carte Satellite"}</span>
+            <span className="rounded-full bg-emerald-500/15 text-emerald-700 px-1.5 py-0.2 text-[10px] font-black uppercase ring-1 ring-emerald-500/30">
+              {locale === "ar" ? "جديد" : "Nouveau"}
+            </span>
+          </button>
+        </div>
+
+        {/* Desktop GPS locate button */}
+        <button
+          type="button"
+          onClick={coords ? clearLocation : enableLocation}
+          className={`hidden sm:inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold shadow-soft transition ${
+            coords
+              ? "border-emerald-500/30 bg-emerald-50 text-emerald-800"
+              : "border-border bg-surface text-foreground hover:bg-surface-muted"
+          }`}
+        >
+          <CrosshairIcon className={`text-sm ${locating ? "animate-spin text-primary" : ""}`} />
+          <span>{coords ? t.clearLocation : locating ? t.hero.locating : t.hero.useLocation}</span>
+        </button>
+      </div>
+
+      {viewMode === "map" ? (
+        <div className="space-y-6">
+          <CityDutyMap
+            city={city}
+            duties={duties}
+            allPharmacies={allPharmacies}
+            locale={locale}
+            userCoords={coords}
+            onLocate={enableLocation}
+            selectedNeighborhood={neighborhood}
+          />
+
+          <CityWhatsAppShare
+            cityName={locale === "ar" ? city.nameAr : city.nameFr}
+            citySlug={city.slug}
+            zoneName={neighborhood || undefined}
+            locale={locale}
+            duties={visible.length > 0 ? visible : duties}
+          />
+        </div>
+      ) : (
+        <>
+          {/* 1. Period Filters Bar (City-wide scope) */}
+          <div className="flex items-center justify-between gap-3">
         <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 py-1">
           {FILTERS.map((f) => (
             <button
@@ -400,6 +493,8 @@ export default function DutyList({
           ))
         )}
       </div>
+      </>
+      )}
 
       {reportTarget && (
         <ReportIssueModal
