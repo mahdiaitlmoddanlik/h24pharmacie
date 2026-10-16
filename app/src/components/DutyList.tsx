@@ -75,7 +75,7 @@ export default function DutyList({
   initialNeighborhood?: string;
 }) {
   const t = getDict(locale);
-  const [viewMode, setViewMode] = useState<"list" | "map">("list");
+  const [viewMode, setViewMode] = useState<"list" | "map">("map");
   const [filter, setFilter] = useState<Filter>("all");
   const [neighborhood, setNeighborhood] = useState<string | null>(
     initialNeighborhood ?? null,
@@ -90,6 +90,11 @@ export default function DutyList({
     if (typeof window === "undefined") return;
 
     const params = new URLSearchParams(window.location.search);
+    const viewParam = params.get("view");
+    if (viewParam === "list" || viewParam === "map") {
+      setViewMode(viewParam);
+    }
+
     const latStr = params.get("lat");
     const lngStr = params.get("lng");
     if (latStr && lngStr) {
@@ -276,9 +281,30 @@ export default function DutyList({
 
   return (
     <div>
-      {/* View Switcher: [ 📋 Liste ] vs [ 🗺️ Carte Satellite ] */}
+      {/* View Switcher: [ 🗺️ Carte Satellite ] vs [ 📋 Liste ] */}
       <div className="mb-5 flex items-center justify-between gap-3">
         <div className="inline-flex rounded-2xl bg-surface p-1 border border-border shadow-soft">
+          <button
+            type="button"
+            onClick={() => setViewMode("map")}
+            className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition ${
+              viewMode === "map"
+                ? "bg-primary text-white shadow-xs"
+                : "text-muted hover:text-foreground hover:bg-surface-muted"
+            }`}
+          >
+            <span>🗺️</span>
+            <span>{locale === "ar" ? "خريطة الأقمار الصناعية" : "Carte Satellite"}</span>
+            <span
+              className={`rounded-full px-1.5 py-0.2 text-[10px] font-black uppercase ring-1 ${
+                viewMode === "map"
+                  ? "bg-white/20 text-white ring-white/30"
+                  : "bg-emerald-500/15 text-emerald-700 ring-emerald-500/30"
+              }`}
+            >
+              {locale === "ar" ? "جديد" : "Nouveau"}
+            </span>
+          </button>
           <button
             type="button"
             onClick={() => setViewMode("list")}
@@ -296,21 +322,6 @@ export default function DutyList({
               }`}
             >
               {visible.length}
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode("map")}
-            className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition ${
-              viewMode === "map"
-                ? "bg-primary text-white shadow-xs"
-                : "text-muted hover:text-foreground hover:bg-surface-muted"
-            }`}
-          >
-            <span>🗺️</span>
-            <span>{locale === "ar" ? "خريطة الأقمار الصناعية" : "Carte Satellite"}</span>
-            <span className="rounded-full bg-emerald-500/15 text-emerald-700 px-1.5 py-0.2 text-[10px] font-black uppercase ring-1 ring-emerald-500/30">
-              {locale === "ar" ? "جديد" : "Nouveau"}
             </span>
           </button>
         </div>
