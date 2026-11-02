@@ -175,8 +175,24 @@ async function main() {
   const scrapedAt = new Date().toISOString();
   const citySnapshots = [];
 
+  const failedCities: string[] = [];
   for (const city of selectedCities) {
-    citySnapshots.push(await scrapeCity(city));
+    try {
+      const snapshotForCity = await scrapeCity(city);
+      if (snapshotForCity.records.length === 0) {
+        throw new Error("no local records");
+      }
+      citySnapshots.push(snapshotForCity);
+    } catch (error) {
+      // Omit the city so update-duty-schedules keeps its existing live data.
+      failedCities.push(city.slug);
+      console.warn(
+        `[WARN] Skipping ${city.slug}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+  if (failedCities.length > 0) {
+    console.warn(`Skipped ${failedCities.length} city(ies): ${failedCities.join(", ")}`);
   }
 
   const snapshot: TelecontactSnapshot = {

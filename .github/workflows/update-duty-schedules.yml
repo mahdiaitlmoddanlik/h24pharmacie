@@ -31,4 +31,18 @@ jobs:
           cache-dependency-path: app/package-lock.json
       - run: npm ci
       - run: npm run db:generate
-      - run: npm run scrape:refresh
+      - name: Marrakech (syndicat)
+        id: marrakech
+        continue-on-error: true
+        run: npm run scrape:marrakech -- --out tmp/syndicat-marrakech-latest.json && npm run scrape:update -- --file tmp/syndicat-marrakech-latest.json
+      - name: Telecontact
+        id: telecontact
+        continue-on-error: true
+        run: npm run scrape:telecontact -- --out tmp/telecontact-latest.json && npm run scrape:update -- --file tmp/telecontact-latest.json
+      - name: Saydalia
+        id: saydalia
+        continue-on-error: true
+        run: npm run scrape:saydalia -- --cities el-jadida,safi,meknes,oujda --out tmp/saydalia-latest.json && npm run scrape:update -- --file tmp/saydalia-latest.json
+      - name: Fail if every source failed
+        if: steps.marrakech.outcome == 'failure' && steps.telecontact.outcome == 'failure' && steps.saydalia.outcome == 'failure'
+        run: exit 1

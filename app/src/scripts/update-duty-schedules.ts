@@ -113,15 +113,23 @@ async function main() {
       `Snapshot duty date ${snapshot.dutyDate} does not match Morocco today ${today}.`,
     );
   }
-  if (snapshot.cities.length === 0) {
+  const validCities = snapshot.cities.filter((city) => city.records.length > 0);
+  if (validCities.length === 0) {
     console.warn(
-      `[SKIP] Snapshot from ${snapshot.source} contains 0 cities (external provider outage). Preserving active duty schedules without error.`,
+      `[SKIP] Snapshot from ${snapshot.source} contains 0 valid city records (external provider outage or empty result). Preserving active duty schedules without error.`,
     );
     return;
   }
-  if (snapshot.cities.some((city) => city.records.length === 0)) {
-    throw new Error("Snapshot has an empty city result; refusing to replace live duty schedules.");
+  if (validCities.length < snapshot.cities.length) {
+    const emptyCityNames = snapshot.cities
+      .filter((c) => c.records.length === 0)
+      .map((c) => c.citySlug)
+      .join(", ");
+    console.warn(
+      `[WARN] Snapshot from ${snapshot.source} had empty results for: ${emptyCityNames}. Preserving existing records for those cities.`,
+    );
   }
+  snapshot.cities = validCities;
 
   const pool = new Pool({
     connectionString,
