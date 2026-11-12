@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import HomeContent from "@/components/HomeContent";
 import { absoluteUrl } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Farmacia Abierta Cerca de Mí en Marruecos — Guardia 24h y Noche | H24 Pharmacie",
   description:

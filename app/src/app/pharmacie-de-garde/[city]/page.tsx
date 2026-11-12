@@ -5,6 +5,7 @@ import { getCities, getCityBySlug } from "@/lib/data";
 import { cityHref } from "@/lib/i18n";
 import { cityMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {

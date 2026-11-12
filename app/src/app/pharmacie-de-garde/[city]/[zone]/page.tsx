@@ -4,6 +4,7 @@ import { getCityBySlug } from "@/lib/data";
 import { getAllZoneStaticParams, getZoneBySlug } from "@/lib/data/neighborhoods";
 import { zoneMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
