@@ -2,7 +2,9 @@
 
 Bilingual (Français / العربية) SEO website & PWA that helps people quickly find
 **duty pharmacies (pharmacies de garde)** in Morocco — with call, Google Maps and
-Waze buttons, last-updated timestamps, source attribution and user reporting.
+Waze buttons, live duty hours, satellite city map, last-updated timestamps, source attribution and user reporting.
+
+🌐 **Site officiel en production** : [https://www.h24pharmacie.com](https://www.h24pharmacie.com)
 
 Full product plan: [`PROJECT_PLAN.md`](./PROJECT_PLAN.md).
 
