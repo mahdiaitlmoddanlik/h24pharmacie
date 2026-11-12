@@ -298,6 +298,9 @@ export function websiteJsonLd(locale: Locale): Record<string, unknown> {
         width: 512,
         height: 512,
       },
+      sameAs: [
+        "https://www.facebook.com/profile.php?id=61596333540640",
+      ],
     },
   };
 }
